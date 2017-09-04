@@ -1,19 +1,18 @@
 /**
 * This factory produces a worker function that loads and parses a modules file.
+* This includes the loading of a baseModule file.
 * @factory
 */
 function _ModuleFileLoader(promise, nodeFs, nodePath, errors) {
   var cnsts = {
-    "module": "module.json"
-    , "nofile": -4058
+    "nofile": -4058
   };
 
   /**
   * Finds and loads the module.json file.
   * @function
   */
-  function loadModuleFile(resolve, reject, base, entry) {
-    var path = nodePath.join(base, entry.moduleFile || cnsts.module);
+  function loadModuleFile(resolve, reject, path) {
 
     nodeFs.readFile(path, 'utf8', moduleReadCb);
 
@@ -57,11 +56,11 @@ function _ModuleFileLoader(promise, nodeFs, nodePath, errors) {
   /**
   * @worker
   */
-  return function ModuleFileLoader(base, entry) {
+  return function ModuleFileLoader(modulePath) {
 
     //get the module file
     return new promise(function (resolve, reject) {
-      loadModuleFile(resolve, reject, base, entry);
+      loadModuleFile(resolve, reject, modulePath);
     });
 
   };
