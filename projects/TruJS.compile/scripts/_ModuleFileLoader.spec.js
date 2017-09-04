@@ -1,6 +1,6 @@
 /**[@test({ "title": "TruJS.compile._ModuleFileLoader: " })]*/
 function testModuleFileLoader1(arrange, act, assert, callback, module) {
-  var moduleFileLoader, moduleObj, moduleFile, nodeFs, base, entry, res;
+  var moduleFileLoader, moduleObj, moduleFile, nodeFs, modulePath, res;
 
   arrange(function () {
     moduleObj = {
@@ -21,14 +21,11 @@ function testModuleFileLoader1(arrange, act, assert, callback, module) {
       })
     };
     moduleFileLoader = module(["TruJS.compile._ModuleFileLoader", [, nodeFs]]);
-    base = "/base";
-    entry = {
-
-    };
+    modulePath = "/base/module.js";
   });
 
   act(function (done) {
-    moduleFileLoader(base, entry)
+    moduleFileLoader(modulePath)
       .then(function (results) {
         res = results;
         done();
@@ -53,7 +50,7 @@ function testModuleFileLoader1(arrange, act, assert, callback, module) {
 
 /**[@test({ "title": "TruJS.compile._ModuleFileLoader: set moduleFile in entry, and readFile error" })]*/
 function testModuleFileLoader2(arrange, act, assert, callback, module) {
-  var moduleFileLoader, nodeFs, nodePath, base, entry, res;
+  var moduleFileLoader, nodeFs, modulePath, res;
 
   arrange(function () {
     nodeFs = {
@@ -61,17 +58,12 @@ function testModuleFileLoader2(arrange, act, assert, callback, module) {
         cb({ "errno": -4058 });
       })
     };
-    nodePath = module(".nodePath");
     moduleFileLoader = module(["TruJS.compile._ModuleFileLoader", [, nodeFs]]);
-    base = "/base";
-    entry = {
-      "moduleFile": "entryFile.json"
-    };
-
+    modulePath = "/base/module.js";
   });
 
   act(function (done) {
-    moduleFileLoader(base, entry)
+    moduleFileLoader(modulePath)
       .then(function (results) {
         res = results;
         done();
@@ -93,6 +85,6 @@ function testModuleFileLoader2(arrange, act, assert, callback, module) {
 
     test("The nodeFs.readFile path arg should be")
       .value(nodeFs.readFile)
-      .hasBeenCalledWithArg(0, 0, nodePath.join(base, entry.moduleFile));
+      .hasBeenCalledWithArg(0, 0, modulePath);
   });
 }
