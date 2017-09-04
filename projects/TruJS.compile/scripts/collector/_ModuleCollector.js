@@ -3,8 +3,61 @@
 * create the list of required files
 * @factory
 */
-function _ModuleCollector(promise, collector_collection, defaults, pathParser, getScriptsDir, moduleFileLoader, moduleFileProcessor, modulePathProcessor) {
+function _ModuleCollector(promise, collector_collection, defaults, pathParser, getScriptsDir, moduleFileLoader, moduleFileProcessor, modulePathProcessor, nodePath) {
+  var cnsts = {
+    "module": "module.json"
+  };
 
+  /**
+  * Using the manifest entry and base path, produces an array of paths for each
+  * based on the module and baseModule properties in the entry
+  * @function
+  */
+  function getModulePaths(base, entry) {
+    var baseModule = entry.baseModule, modulePaths = [];
+
+    //if there is a baseModule entry, add that to the modulePaths
+    if (!!baseModule) {
+      if (!isArray(baseModule)) {
+        baseModule = [baseModule];
+      }
+      //resolve all paths
+      baseModule.forEach(function forEachBaseModule(path) {
+        path = pathParser(null, path);
+        modulePaths.push(path);
+      });
+    }
+
+    //add the current entry's module path at the end
+    modulePaths.push(nodePath.join(base, entry.moduleFile || cnsts.module));
+
+    return modulePaths;
+  }
+  /**
+  * Loads all module files in the module array
+  * @function
+  */
+  function loadModules(paths) {
+    var procs = [];
+
+    paths.forEach(function forEachPath(path) {
+      procs.push(moduleFileLoader(path));
+    });
+
+    return promise.all(procs);
+  }
+  /**
+  * Merge all of the loaded module objects
+  * @function
+  */
+  function mergeModules(modules) {
+    var module = {};
+    modules.forEach(function forEachModule(modObj) {
+      module = apply(modObj, module);
+    });
+
+    return module;
+  }
   /**
   * Add the require ioc paths and add any files from the manifest entry
   * @function
@@ -51,10 +104,17 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
   */
   return function ModuleCollector(base, entry) {
     //setup the path to the scripts, using the default or the manifest entry
-    var scriptsPath = getScriptsDir(base, entry);
+    var scriptsPath = getScriptsDir(base, entry)
+    //get an array of all the module files we're going to load
+    , modulePaths = getModulePaths(base, entry);
 
     //get the module file data
-    var proc = moduleFileLoader(base, entry);
+    var proc = loadModules(modulePaths);
+
+    //merge all of the module objects
+    proc = proc.then(function (modules) {
+      return mergeModules(modules);
+    });
 
     //use the module to get the list of file paths
     proc = proc.then(function (module) {
