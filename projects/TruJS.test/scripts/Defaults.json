@@ -1,0 +1,6 @@
+{
+  "testFile": "test.json",
+  "testPath": {
+    "node": "node_modules"
+  }
+}

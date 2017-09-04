@@ -1,0 +1,54 @@
+{
+  "all": {
+    "fileTypes": [],
+    "format": "browser"
+  },
+  "node": {
+    "minify": false,
+    "strict": true,
+    "lint": false,
+    "global": "global"
+  },
+  "browser": {
+    "minify": true,
+    "strict": true,
+    "lint": false,
+    "global": "window"
+  },
+  "none": {
+    "minify": false,
+    "strict": true,
+    "lint": false
+  },
+  "module": {
+    "return": "$$container$$"
+  },
+  "test": {
+    "format": "none",
+    "strict": false,
+    "naming": false,
+    "lint": false
+  },
+  "iocPaths": [
+    "{repos}/TruJS/TruJS.js",
+    "{repos}/TruJS/_Object.js",
+    "{repos}/TruJS/func/_Inspector.js",
+    "{repos}/TruJS/ioc/_Entry.js",
+    "{repos}/TruJS/ioc/_Container.js",
+    "{repos}/TruJS/ioc/Container.js"
+  ],
+  "minifier": {
+    "extentionMap": {
+      ".js": "javascript"
+      , ".css": "css"
+      , ".html": "html"
+    }
+    , "javascript": {
+      "mangle": false
+    }
+  },
+  "manifest": {
+    "manifestFile": "manifest.json"
+    , "manifestDir": "{script}/manifest.json"
+  }
+}

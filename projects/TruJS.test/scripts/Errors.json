@@ -1,0 +1,4 @@
+{
+  "missingTestFileArg": "[MissingTestFileArg] There isn't a \"file\" entry in the commandline arguments",
+  "missingTestFile": "[MissingTestFile] Unable to locate the test file at \"{path}\""
+}

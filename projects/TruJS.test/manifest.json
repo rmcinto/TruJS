@@ -1,0 +1,88 @@
+[{
+  "type": "module",
+  "name": "TruJS.test",
+  "version": "1.0.0",
+  "description": "This is the TruJS.test module for node",
+  "copywrite": true,
+
+  "hints": {
+    "TruJS": "{repos}/TruJS"
+  },
+
+  "module": {
+    "global": [":global"],
+    "document": [":require(\"min-document\")"],
+    "XMLHttpRequest": [":require(\"w3c-xmlhttprequest\").XMLHttpRequest"]
+  },
+
+  "format": "node",
+
+  "output": "./node_modules/{name}/index.js"
+}, {
+  "type": "module",
+  "name": "TruJS.test",
+  "version": "1.0.0",
+  "description": "This is the TruJS.test module for browsers",
+  "copywrite": true,
+
+  "hints": {
+    "TruJS": "{repos}/TruJS"
+  },
+
+  "module": {
+    "global": [":window"],
+    "document": [":document"],
+    "XMLHttpRequest": [":XMLHttpRequest"],
+    "resultGrid": ["TruJS.test.display._ResultGridFactory", []],
+    "progressBar": ["TruJS.test.display._ProgressBarFactory", []]
+  },
+
+  "minify": false,
+
+  "format": "browser",
+  "namespace": "TruJSTest",
+
+  "output": "./browser_modules/{name}/index.js"
+}, {
+    "type": "javascript",
+    "name": "TruJS.test",
+    "version": "1.0.0",
+    "description": "This script executes the test runner for browsers",
+
+    "files": [
+      "../browser-run.js"
+    ],
+
+    "minify": false,
+
+    "format": "browser",
+
+    "output": "./browser_modules/{name}/run.js"
+}, {
+  "type": "javascript",
+  "name": "TruJS.test",
+  "version": "1.0.0",
+  "description": "This is the TruJS.test command line untility",
+
+  "files": [
+    "../cli.js"
+  ],
+
+  "format": "none",
+
+  "output": "./node_modules/{name}/cli.js"
+}, {
+  "type": "test",
+  "name": "TruJS.test",
+  "version": "1.0.0",
+  "description": "The test package for node",
+
+  "output": "./node_modules/{name}/test.json"
+}, {
+  "type": "test",
+  "name": "TruJS.test",
+  "version": "1.0.0",
+  "description": "The test package for browser",
+
+  "output": "./browser_modules/{name}/test.json"
+}]

@@ -1,0 +1,23 @@
+[{
+    "type": "javascript"
+    , "name": "TruJS.cmdArgs"
+    , "version": "1.0.0"
+
+    , "files": [
+      "{repos}/TruJS/RegEx.js"
+      , "./CmdArgs.js"
+    ]
+
+    , "minify": false
+
+    , "format": "node"
+    , "return": "CmdArgs"
+
+    , "output": "./node_modules/{name}/index.js"
+}, {
+    "type": "test"
+    , "name": "TruJS.cmdArgs"
+    , "description": "The test package for the TruJS.cmdArgs"
+
+    , "output": "./node_modules/{name}/test.json"
+}]
