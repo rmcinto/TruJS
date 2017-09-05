@@ -2,7 +2,7 @@
 * Catch all for cross concern utilities
 * @object
 */
-function _Utilities(nodePath) {
+function _Utilities(nodePath, defaults) {
   var cnsts = {
     "scriptsDir": "scripts"
   };
@@ -29,7 +29,7 @@ function _Utilities(nodePath) {
       "enumerable": true
       , "value": function getScriptsDir(base, entry) {
         //setup the path to the scripts, using the default or the manifest entry
-        var scriptsDir = (!isNill(entry.scripts)) ? entry.scripts : cnsts.scriptsDir
+        var scriptsDir = (!isNill(entry.scripts)) ? entry.scripts : defaults.scriptsDir
         , scriptsPath = nodePath.join(base, scriptsDir);
 
         return scriptsPath;

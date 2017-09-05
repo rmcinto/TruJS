@@ -50,5 +50,6 @@
   "manifest": {
     "manifestFile": "manifest.json"
     , "manifestDir": "{script}/manifest.json"
-  }
+  },
+  "scriptsDir": "scripts"
 }
