@@ -35,6 +35,12 @@ function _PathParser(nodePath, nodeProcess, nodeDirName) {
   */
   return function PathParser(base, curPath) {
 
+    //if curPath is undefined then the curPath is base
+    if (curPath === undefined) {
+      curPath = base;
+      base = null;
+    }
+
     //set the base default
     base = base || tags.root;
 
