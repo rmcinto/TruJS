@@ -5,7 +5,7 @@
   , "missingInclude": "[MissingInclude] There isn't a manifest entry named \"{include}\"."
   , "missingSaver": "[MissingSaver] The saver for type \"{type}\" does not exist. A Saver is required when the \"output\" parameter is used."
   , "missingHint": "[MissingHint] Unable to find the hint for object \"{path}\"."
-  , "invalidModuleEntry": "[InvalidModuleEntry] The module entry \"{entry}\" could not be found in the file system."
+  , "invalidModuleEntry": "[InvalidModuleEntry] The module entry \"{entry}\" could not be found in the file system starting at \"{path}\"."
   , "missingMinifierModule": "[MissingMinifierModule] There isn't a module for the \"{ext}\" extension."
   , "minificationError": "[MinificationError] {:message:} @line: {:line:} @col: {:col:}."
   , "missingTestTitle": "[MissingTestTitleOrLabel] The test object requires a title or label."

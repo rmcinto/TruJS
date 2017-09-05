@@ -27,13 +27,13 @@ function _ModulePathProcessor(promise, nodeFs, pathParser, errors) {
     });
 
     //the callback for each path that has finished
-    function pathFinished(path, key) {
+    function pathFinished(path, key, startPath) {
       if (!hasErr) {
 
         //if there isn't a path found it's an err
         if (!path) {
           hasErr = true;
-          reject(new Error(errors.invalidModuleEntry.replace("{entry}", key)));
+          reject(new Error(errors.invalidModuleEntry.replace("{entry}", key).replace("{path}", startPath)));
           return;
         }
 
@@ -44,22 +44,7 @@ function _ModulePathProcessor(promise, nodeFs, pathParser, errors) {
         len--;
         if (len === 0) {
           //sort the paths so repo entries are first (more cosmetic than anything)
-          found.sort(function sortFound(a,b) {
-            if (a.indexOf("repos") !== -1 && b.indexOf("repos") === -1) {
-              return -1;
-            }
-            if (b.indexOf("repos") !== -1 && a.indexOf("repos") === -1) {
-              return 1;
-            }
-            if (a < b) {
-              return -1;
-            }
-            if (b < a) {
-              return 1;
-            }
-            return 0;
-          });
-
+          found.sort(sortFound);
           resolve(found);
         }
 
@@ -107,7 +92,7 @@ function _ModulePathProcessor(promise, nodeFs, pathParser, errors) {
         }
         //no path left, finish with a null result
         else {
-          finished(null, key);
+          finished(null, key, path);
         }
 
       }
@@ -164,7 +149,25 @@ function _ModulePathProcessor(promise, nodeFs, pathParser, errors) {
     }
     return segs.join(sep);
   }
-
+  /**
+  * Sorts the array of paths so anything with a repos directory are first
+  * @function
+  */
+  function sortFound(a,b) {
+    if (a.indexOf("repos") !== -1 && b.indexOf("repos") === -1) {
+      return -1;
+    }
+    if (b.indexOf("repos") !== -1 && a.indexOf("repos") === -1) {
+      return 1;
+    }
+    if (a < b) {
+      return -1;
+    }
+    if (b < a) {
+      return 1;
+    }
+    return 0;
+  }
   /**
   * @worker
   */
