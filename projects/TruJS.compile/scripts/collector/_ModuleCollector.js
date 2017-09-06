@@ -24,7 +24,7 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
       }
       //resolve all paths
       baseModule.forEach(function forEachBaseModule(path) {
-        if (nodePath.extname(path) === "") {
+        if (nodePath.extname(path) !== ".json") {
           path = nodePath.join(path, cnsts.module);
         }
         path = pathParser(null, path);

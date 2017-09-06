@@ -133,7 +133,7 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
     base = "/base";
     entry = {
       "baseModule": [
-        "{projects}/Other"
+        "{projects}/Other.proj"
         , "{projects}/Another/other-manifest.json"
       ]
     };
@@ -154,17 +154,17 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
     test("moduleFileLoader 1st call should have path")
       .run(moduleFileLoader.getArgs, [0])
       .value("{value}", "[0]")
-      .contains("module.json");
+      .endsWith("module.json");
 
     test("moduleFileLoader 2nd call should have path")
       .run(moduleFileLoader.getArgs, [1])
       .value("{value}", "[0]")
-      .contains("other-manifest.json");
+      .endsWith("other-manifest.json");
 
     test("moduleFileLoader 3rd call should have path")
       .run(moduleFileLoader.getArgs, [2])
       .value("{value}", "[0]")
-      .contains("module.json");
+      .endsWith("module.json");
 
   });
 }
