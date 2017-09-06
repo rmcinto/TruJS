@@ -31,6 +31,7 @@
   , "pathResolver": ["TruJS.compile._PathResolver", []]
   , "annotation": ["TruJS.compile._Annotation", []]
   , "javaScriptConverter": ["TruJS.compile._JavaScriptConverter", []]
+  , "moduleMerger": ["TruJS.compile._ModuleMerger", []]
   , "moduleFileLoader": ["TruJS.compile._ModuleFileLoader", []]
   , "moduleFileProcessor": ["TruJS.compile._ModuleFileProcessor", []]
   , "modulePathProcessor": ["TruJS.compile._ModulePathProcessor", []]
