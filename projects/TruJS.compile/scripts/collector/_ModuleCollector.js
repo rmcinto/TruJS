@@ -14,7 +14,8 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
   * @function
   */
   function getModulePaths(base, entry) {
-    var baseModule = entry.baseModule, modulePaths = [];
+    var baseModule = entry.baseModule, modulePaths = []
+    , curModule = pathParser(base, entry.moduleFile || cnsts.module);
 
     //if there is a baseModule entry, add that to the modulePaths
     if (!!baseModule) {
@@ -23,13 +24,16 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
       }
       //resolve all paths
       baseModule.forEach(function forEachBaseModule(path) {
+        if (nodePath.extname(path) === "") {
+          path = nodePath.join(path, cnsts.module);
+        }
         path = pathParser(null, path);
         modulePaths.push(path);
       });
     }
 
     //add the current entry's module path at the end
-    modulePaths.push(nodePath.join(base, entry.moduleFile || cnsts.module));
+    modulePaths.push(curModule);
 
     return modulePaths;
   }
@@ -40,8 +44,8 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
   function loadModules(paths) {
     var procs = [];
 
-    paths.forEach(function forEachPath(path) {
-      procs.push(moduleFileLoader(path));
+    paths.forEach(function forEachPath(pathObj) {
+      procs.push(moduleFileLoader(pathObj.path));
     });
 
     return promise.all(procs);
