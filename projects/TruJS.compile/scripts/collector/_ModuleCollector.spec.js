@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.compile.collector._ModuleCollector: default module file" })]*/
+/**[@test({ "title": "TruJS.compile.collector._ModuleCollector: default module file, w/ files parameter" })]*/
 function testModuleCollector1(arrange, act, assert, promise, callback, module) {
   var moduleCollector, collector_collection, paths, moduleFileLoader, moduleFileProcessor, modulePathProcessor, base, entry, res;
 
@@ -165,6 +165,59 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
       .run(moduleFileLoader.getArgs, [2])
       .value("{value}", "[0]")
       .endsWith("module.json");
+
+  });
+}
+
+/**[@test({ "title": "TruJS.compile.collector._ModuleCollector: module parameter" })]*/
+function testModuleCollector1(arrange, act, assert, promise, callback, module) {
+  var moduleCollector, paths, curModule, entryModule, collector_collection, moduleFileLoader, moduleFileProcessor, modulePathProcessor, moduleMerger, base, entry, res;
+
+  arrange(function () {
+    paths = [
+      "/base/test1.js"
+      , "/base/test2.js"
+    ];
+    curModule = {};
+    entryModule = {
+      "test3": ["", []]
+    };
+    moduleFileLoader = callback(promise.resolve(curModule));
+    moduleMerger = callback({});
+    moduleFileProcessor = callback(promise.resolve());
+    modulePathProcessor = callback(promise.resolve(paths));
+    collector_collection = callback(promise.resolve());
+    moduleCollector = module(["TruJS.compile.collector._ModuleCollector", [, collector_collection, , , , moduleFileLoader, moduleFileProcessor, modulePathProcessor,,moduleMerger]]);
+    base = "/base";
+    entry = {
+      "module": entryModule
+    };
+  });
+
+  act(function (done) {
+    moduleCollector(base, entry)
+      .then(function (results) {
+        res = results;
+        done();
+      })
+  });
+
+  assert(function (test) {
+
+    test("The moduleMerger callback should be called with 2 module objects")
+      .run(moduleMerger.getArgs, [0])
+      .value("{value}", "[0]")
+      .hasMemberCountOf(2);
+
+    test("The moduleMerger 1st module object should be")
+      .run(moduleMerger.getArgs, [0])
+      .value("{value}", "[0][0]")
+      .equals(curModule);
+
+    test("The moduleMerger 2nd module object should be")
+      .run(moduleMerger.getArgs, [0])
+      .value("{value}", "[0][1]")
+      .equals(entryModule);
 
   });
 }

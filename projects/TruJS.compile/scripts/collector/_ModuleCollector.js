@@ -1,6 +1,10 @@
 /**
 * This factory produces a worker function that uses the module.json file to
-* create the list of required files
+* create the list of required files.
+* Manifest Entry Properties Used
+*   moduleFile: {optional string file name for non-standard module file names}
+*   baseModule: {optional array of module paths, to be merged with the module}
+*   files: {optional array of file paths to be appended to the output file list}
 * @factory
 */
 function _ModuleCollector(promise, collector_collection, defaults, pathParser, getScriptsDir, moduleFileLoader, moduleFileProcessor, modulePathProcessor, nodePath, moduleMerger) {
@@ -105,11 +109,16 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
 
     //merge all of the module objects
     proc = proc.then(function (modules) {
+      //there could be a module object in the manifest entry, append to the end
+      if (!!entry.module) {
+        modules.push(entry.module);
+      }
       return moduleMerger(modules);
     });
 
     //use the module to get the list of file paths
     proc = proc.then(function (module) {
+      entry.module = module;//update the entry module object
       return moduleFileProcessor(entry, module);
     });
 
