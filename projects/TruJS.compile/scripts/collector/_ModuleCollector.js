@@ -3,7 +3,7 @@
 * create the list of required files
 * @factory
 */
-function _ModuleCollector(promise, collector_collection, defaults, pathParser, getScriptsDir, moduleFileLoader, moduleFileProcessor, modulePathProcessor, nodePath) {
+function _ModuleCollector(promise, collector_collection, defaults, pathParser, getScriptsDir, moduleFileLoader, moduleFileProcessor, modulePathProcessor, nodePath, moduleMerger) {
   var cnsts = {
     "module": "module.json"
   };
@@ -49,18 +49,6 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
     });
 
     return promise.all(procs);
-  }
-  /**
-  * Merge all of the loaded module objects
-  * @function
-  */
-  function mergeModules(modules) {
-    var module = {};
-    modules.forEach(function forEachModule(modObj) {
-      module = apply(modObj, module);
-    });
-
-    return module;
   }
   /**
   * Add the require ioc paths and add any files from the manifest entry
@@ -117,7 +105,7 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
 
     //merge all of the module objects
     proc = proc.then(function (modules) {
-      return mergeModules(modules);
+      return moduleMerger(modules);
     });
 
     //use the module to get the list of file paths

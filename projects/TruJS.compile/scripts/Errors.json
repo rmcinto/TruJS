@@ -10,4 +10,5 @@
   , "minificationError": "[MinificationError] {:message:} @line: {:line:} @col: {:col:}."
   , "missingTestTitle": "[MissingTestTitleOrLabel] The test object requires a title or label."
   , "fileMissing": "[FileMissing] The file \"{path}\" does not exist."
+  , "moduleEntryMismatch": "[ModuleEntryMismatch] The module entry types, at \"{key}\", to be merged are not of the same type."
 }
