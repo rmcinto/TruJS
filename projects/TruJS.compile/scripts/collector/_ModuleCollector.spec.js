@@ -114,3 +114,57 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
 
   });
 }
+
+/**[@test({ "title": "TruJS.compile.collector._ModuleCollector: multiple baseModule parameter, no file name" })]*/
+function testModuleCollector1(arrange, act, assert, promise, callback, module) {
+  var moduleCollector, moduleFileLoader, moduleFileProcessor, base, entry;
+
+  arrange(function () {
+    moduleFileLoader = callback(function (path) {
+      if (moduleFileLoader.callbackCount === 1) {
+        return { "test1" : "test1.1", "test2": "test2" };
+      }
+      else {
+        return { "test1" : "test1.2", "test3": "test3" };
+      }
+    });
+    moduleFileProcessor = callback(promise.reject());
+    moduleCollector = module(["TruJS.compile.collector._ModuleCollector", [, , , , , moduleFileLoader, moduleFileProcessor]]);
+    base = "/base";
+    entry = {
+      "baseModule": [
+        "{projects}/Other"
+        , "{projects}/Another/other-manifest.json"
+      ]
+    };
+  });
+
+  act(function (done) {
+    moduleCollector(base, entry)
+      .catch(function () {
+        done();
+      });
+  });
+
+  assert(function (test) {
+    test("moduleFileLoader should be called 3 times")
+      .value(moduleFileLoader)
+      .hasBeenCalled(3);
+
+    test("moduleFileLoader 1st call should have path")
+      .run(moduleFileLoader.getArgs, [0])
+      .value("{value}", "[0]")
+      .contains("module.json");
+
+    test("moduleFileLoader 2nd call should have path")
+      .run(moduleFileLoader.getArgs, [1])
+      .value("{value}", "[0]")
+      .contains("other-manifest.json");
+
+    test("moduleFileLoader 3rd call should have path")
+      .run(moduleFileLoader.getArgs, [2])
+      .value("{value}", "[0]")
+      .contains("module.json");
+
+  });
+}
