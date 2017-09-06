@@ -20,10 +20,6 @@ function _ModuleFileProcessor(promise, nodePath, iocEntry, errors) {
       entry.hints = apply(entry.hints, hints);
     }
 
-    //there could be a module object in the entry so lets add that and
-    //update the entry module object
-    entry.module = apply(entry.module, module);
-
     //loop through all properties in the module object
     var objPaths = processModuleEntry([module])
     , filePaths = {}

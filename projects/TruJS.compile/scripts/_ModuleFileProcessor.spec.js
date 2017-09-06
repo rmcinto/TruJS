@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.compile._ModuleFileProcessor: w/o project hints, w/ module value in entry" })]*/
+/**[@test({ "title": "TruJS.compile._ModuleFileProcessor: w/o project hint" })]*/
 function testModuleProcessor1(arrange, act, assert, module) {
   var moduleFileProcessor, entry, moduleObj, res;
 
@@ -15,9 +15,6 @@ function testModuleProcessor1(arrange, act, assert, module) {
       "name": "TruJS.test"
       , "hints": {
         "TruJS": "./{projects}/TruJS"
-      }
-      , "module": {
-        "test5": ["TruJS.test._TestFactory5", []]
       }
     };
   });
@@ -49,19 +46,19 @@ function testModuleProcessor1(arrange, act, assert, module) {
       .stringify()
       .equals("{\"TruJS.test\":\"./\",\"TruJS\":\"./{projects}/TruJS\"}");
 
-    test("moduleObj should have 6 properties")
+    test("moduleObj should have 5 properties")
       .value(moduleObj)
-      .hasPropertyCountOf(6);
+      .hasPropertyCountOf(5);
 
-    test("res should have 4 properties")
+    test("res should have 3 properties")
       .value(res)
-      .hasPropertyCountOf(4);
+      .hasPropertyCountOf(3);
 
     test("res keys should be")
       .value(res)
       .getKeys()
       .toString()
-      .equals("TruJS.test._TestFactory1,TruJS._TestFactory2,TruJS.test.TestObj.testMethod,TruJS.test._TestFactory5");
+      .equals("TruJS.test._TestFactory1,TruJS._TestFactory2,TruJS.test.TestObj.testMethod");
 
   });
 }
