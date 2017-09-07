@@ -2,7 +2,7 @@
 * Helper methods for strings
 * @factory
 */
-function _String() {
+function _String(arrayOfType) {
 
   /**
   * @worker
@@ -27,7 +27,7 @@ function _String() {
                   delimiter = [delimiter, delimiter];
               }
               //ensure the delimiter is an array of string
-              if (TruJS.Array.ofType(delimiter) !== 'string') {
+              if (arrayOfType(delimiter) !== 'string') {
                   throw new Error('The delimiter must ba a string.');
               }
               //create the reg ex
