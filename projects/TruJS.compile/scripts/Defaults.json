@@ -51,5 +51,10 @@
     "manifestFile": "manifest.json"
     , "manifestDir": "{script}/manifest.json"
   },
-  "scriptsDir": "scripts"
+  "scriptsDir": "scripts",
+  "fileTypes": {
+    ".html": "Html",
+    ".css": "Css",
+    ".json": "Json"
+  }
 }

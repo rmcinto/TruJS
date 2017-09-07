@@ -4,10 +4,11 @@
 * object with the namespace and name.
 * @factory
 */
-function _Namer(annotation, stringTrim) {
+function _Namer(annotation, stringTrim, defaults) {
   var SPLIT_PATT = /[\\/.]/g
   , cnsts = {
     "namespaceEndings": ["projects", "repos"]
+    , "jsExt": [".js", ".json"]
   };
 
   /**
@@ -27,7 +28,7 @@ function _Namer(annotation, stringTrim) {
     if (!naming.skip) {
 
       //default to naming name, if missing use file name minus the extention
-      naming.name = naming.name || fileObj.name;
+      naming.name = naming.name || determineName(fileObj);
 
       //extract the namespace from the base directory
       naming.namespace = naming.namespace || extractNamespace(fileObj.dir, root);
@@ -87,6 +88,19 @@ function _Namer(annotation, stringTrim) {
     namespace = stringTrim(namespace, "[.]");
 
     return namespace;
+  }
+  /**
+  * Uses the file name and extension to determine the name
+  * @function
+  */
+  function determineName(fileObj) {
+    //if this is not .js or .json
+    if (cnsts.jsExt.indexOf(fileObj.ext) === -1) {
+      if (!!defaults.fileTypes[fileObj.ext]) {
+        return fileObj.name + defaults.fileTypes[fileObj.ext];
+      }
+    }
+    return fileObj.name;
   }
 
   /**
