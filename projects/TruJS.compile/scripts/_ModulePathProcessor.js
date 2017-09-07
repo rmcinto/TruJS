@@ -3,15 +3,8 @@
 * entries, removing the last segment until the file is found
 * @factory
 */
-function _ModulePathProcessor(promise, nodeFs, pathParser, errors) {
-  var cnsts = {
-    "fileTypes": {
-      ".html": /(.*)Html$/
-      , ".css": /(.*)Css$/
-      , ".json": /(.*)Json$/
-    }
-  }
-  , SEP_PATT = /[\\/]/;
+function _ModulePathProcessor(promise, nodeFs, pathParser, errors, defaults) {
+  var SEP_PATT = /[\\/]/;
 
   /**
   * Loops through the paths, determines the type, checks to see if the files
@@ -108,9 +101,9 @@ function _ModulePathProcessor(promise, nodeFs, pathParser, errors) {
     var fileType;
 
     //find the type
-    Object.keys(cnsts.fileTypes).every(function forEachFileType(type) {
+    Object.keys(defaults.fileTypes).every(function forEachFileType(type) {
       //test the name with this patthern
-      var patt = cnsts.fileTypes[type]
+      var patt = new RegExp("(.*)" + defaults.fileTypes[type] + "$")
       , match = patt.exec(path);
       if (!!match) {
         path = match[1];

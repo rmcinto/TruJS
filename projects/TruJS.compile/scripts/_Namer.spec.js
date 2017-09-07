@@ -147,3 +147,29 @@ function testNamer1(arrange, act, assert, module) {
       .equals("{\"name\":\"base.project.test.widgets._Test\",\"namespace\":\"base.project.test.widgets\"}");
   });
 }
+
+/**[@test({ "title": "TruJS.compile._Namer: non js/json"})]*/
+function testNamer1(arrange, act, assert, module) {
+  var namer, fileObj, res;
+
+  arrange(function () {
+    namer = module(["TruJS.compile._Namer", []]);
+    fileObj = {
+      "name": "Test"
+      , "ext": ".html"
+      , "dir": "/base/project/test/widgets"
+      , "data": "function () {}"
+    };
+  });
+
+  act(function () {
+    res = namer("test", fileObj);
+  });
+
+  assert(function (test) {
+    test("The naming object should be")
+      .value(res)
+      .stringify()
+      .equals("{\"name\":\"test.widgets.TestHtml\",\"namespace\":\"test.widgets\"}");
+  });
+}
