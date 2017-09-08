@@ -55,6 +55,8 @@
   "fileTypes": {
     ".html": "Html",
     ".css": "Css",
-    ".json": "Json"
+    ".json": "Json",
+    ".xml": "Xml",
+    ".txt": "Txt"
   }
 }

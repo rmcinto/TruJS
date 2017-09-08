@@ -12,6 +12,7 @@
   , "stringInsert": [".string.insert"]
   , "stringApply": [".string.apply"]
   , "array": ["TruJS._Array", []]
+  , "arrayOfType": [".array.ofType"]
   , "arrayFromArguments": [".array.fromArguments"]
   , "regEx": ["TruJS._RegEx", []]
   , "regExGetMatches": [".regEx.getMatches"]
