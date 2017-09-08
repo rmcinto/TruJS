@@ -26,6 +26,7 @@
   , "linter": ["TruJS.compile._Linter", []]
   , "minifier": ["TruJS.compile._Minifier", []]
   , "compiler": ["TruJS.compile._Compiler", []]
+  , "fileObj": ["TruJS.compile._FileObj", []]
   , "pathParser": ["TruJS.compile._PathParser", []]
   , "pathProcessor": ["TruJS.compile._PathProcessor", []]
   , "pathResultProcessor": ["TruJS.compile._PathResultProcessor", []]
