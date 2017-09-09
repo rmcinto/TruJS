@@ -6,6 +6,12 @@
 function _FilesSaver(nodeFs, nodePath, promise) {
   var cnsts = {
     "exists": -4075
+    , "validExts": [
+      ".js"
+      , ".json"
+      , ".xml"
+      , ".txt"
+    ]
   };
 
   /**
@@ -13,7 +19,8 @@ function _FilesSaver(nodeFs, nodePath, promise) {
   * @function
   */
   function saveFiles(resolve, reject, filePath, files) {
-    var len = files.length, hasErr;
+    var len = files.length
+    , hasErr;
 
     files.forEach(function forEachFile(fileObj) {
       saveFile(filePath, fileObj, writeCallback);
@@ -68,7 +75,7 @@ function _FilesSaver(nodeFs, nodePath, promise) {
     }
 
     //if there isn't a file name then add it
-    if (!nodePath.extname(filePath)) {
+    if (cnsts.validExts.indexOf(nodePath.extname(filePath)) === -1) {
       if (!!fileObj.file) {
         filePath = nodePath.join(filePath, fileObj.file);
       }
