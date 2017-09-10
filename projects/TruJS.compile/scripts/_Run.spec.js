@@ -21,7 +21,7 @@ function testRun1(arrange, act, assert, callback, promise, module) {
     run = module(["TruJS.compile._Run", [, nodeFs,, compiler, defaults]]);
     cmdArgs = {
       "base": "/base"
-      , "manifest": "/base/path1"
+      , "manifest": "path1"
     };
     manifestPath = nodePath.resolve(nodePath.join(cmdArgs.manifest, defaults.manifest.manifestFile));
   });
@@ -295,7 +295,7 @@ function testRun6(arrange, act, assert, callback, module) {
   });
 
   assert(function (test) {
-    
+
     test("The res should not be an error")
       .value(res)
       .not()
@@ -304,6 +304,59 @@ function testRun6(arrange, act, assert, callback, module) {
     test("The compiler callback should be called with the base path")
       .value(compiler)
       .hasBeenCalledWithArg(0, 0, manifestPath);
+
+  });
+}
+
+/**[@test({ "title": "TruJS.compile._Run: entry command arg " })]*/
+function testRun7(arrange, act, assert, callback, promise, module) {
+  var defaults, manifest, nodeFs, compiler, run, cmdArgs, res;
+
+  arrange(function () {
+    manifest = "[{ \"name\": \"entry1\" },{ \"name\": \"entry2\" },{ \"name\": \"entry3\" },{ \"name\": \"entry4\" }]";
+    nodeFs = {
+      "readFile": callback(function (path, b, cb) {
+        cb(null, manifest);
+      })
+    };
+    compiler = callback(function (settings) {
+      return promise.resolve(settings);
+    });
+    run = module(["TruJS.compile._Run", [, nodeFs, , compiler]]);
+    cmdArgs = {
+      "base": "/base"
+      , "manifest": "path1"
+      , "entry": "1,3"
+    };
+  });
+
+  act(function (done) {
+    run(cmdArgs)
+      .then(function (results) {
+        res = results;
+        done();
+      })
+      .catch(function (err) {
+        res = err;
+        done();
+      });
+  });
+
+  assert(function (test) {
+    test("The manifest sent to the compile should have 2 members")
+      .run(compiler.getArgs, [0])
+      .value("{value}", "[1]")
+      .hasMemberCountOf(2);
+
+    test("The 1st manifest entry should have a property \"name\" equal to")
+      .run(compiler.getArgs, [0])
+      .value("{value}", "[1][0].name")
+      .equals("entry2");
+
+    test("The 2nd manifest entry should have a property \"name\" equal to")
+      .run(compiler.getArgs, [0])
+      .value("{value}", "[1][1].name")
+      .equals("entry4");
 
   });
 }
