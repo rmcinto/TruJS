@@ -20,6 +20,7 @@
   , "utilities": ["TruJS.compile._Utilities", []]
   , "getLineEnding": [".utilities.getLineEnding", [], false]
   , "getScriptsDir": [".utilities.getScriptsDir", [], false]
+  , "getEntryArg": [".utilities.getEntryArg", [], false]
   , "dir": ["TruJS.fs._Directory", []]
   , "dirProcessor": ["TruJS.compile._DirectoryProcessor", []]
   , "iocEntry": ["TruJS.ioc._Entry", []]

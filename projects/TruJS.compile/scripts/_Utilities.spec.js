@@ -40,3 +40,46 @@ function testUtilitiesGetScriptsDir(arrange, act, assert, module) {
     test("res2 should have a \"other\" dir").value(res2).contains("other");
   });
 }
+
+/**[@test( { "title": "TruJS.compile._Utilities.getEntryArg" } )]*/
+function testUtilitiesGetScriptsDir(arrange, act, assert, module) {
+  var getEntryArg, cmdArgs1, cmdArgs2, cmdArgs3, res1, res2, res3;
+
+  arrange(function () {
+    getEntryArg = module(["TruJS.compile._Utilities", []]).getEntryArg;
+    cmdArgs1 = {
+      "entry": "all"
+    };
+    cmdArgs2 = {
+      "entry": "1,2,4"
+    };
+    cmdArgs3 = {
+
+    };
+  });
+
+  act(function () {
+    res1 = getEntryArg(cmdArgs1);
+    res2 = getEntryArg(cmdArgs2);
+    res3 = getEntryArg(cmdArgs3);
+  });
+
+  assert(function (test) {
+    test("res1 should be \"all\"")
+      .value(res1)
+      .equals("all");
+
+    test("res2 should be an array with 3 members")
+      .value(res2)
+      .hasMemberCountOf(3);
+
+    test("the 2nd member of res2 should be")
+      .value(res2, "[1]")
+      .equals("2");
+
+    test("res1 should be \"all\"")
+      .value(res3)
+      .equals("all");
+
+  });
+}
