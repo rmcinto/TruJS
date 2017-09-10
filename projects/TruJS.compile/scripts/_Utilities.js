@@ -35,6 +35,20 @@ function _Utilities(nodePath, defaults) {
         return scriptsPath;
       }
     }
+    /**
+    * Parses the entry option in the cmdArgs object and return either "all" or an
+    * array representing the manifest entry indexes that will be compiled
+    * @function
+    */
+    , "getEntryArg": {
+      "enumerable": true
+      , "value": function getEntryArg(cmdArgs) {
+        if (!!cmdArgs.entry && cmdArgs.entry !== "all") {
+          return cmdArgs.entry.split(",");
+        }
+        return "all";
+      }
+    }
   });
 
 }

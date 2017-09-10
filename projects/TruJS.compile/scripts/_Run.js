@@ -4,7 +4,7 @@
 * runs the compiler
 * @factory
 */
-function _Run(promise, nodeFs, nodePath, compiler, defaults, nodeDirName, nodeProcess) {
+function _Run(promise, nodeFs, nodePath, compiler, defaults, nodeDirName, nodeProcess, getEntryArg) {
   var cnsts = {
     "manifest": "manifest.json"
     , "manifestDir": "{script}/manifest.json"
@@ -18,7 +18,7 @@ function _Run(promise, nodeFs, nodePath, compiler, defaults, nodeDirName, nodePr
   function processArgs(resolve, reject, cmdArgs) {
     var manPath = getManifestPath(cmdArgs)
     , basePath = getBasePath(cmdArgs, manPath)
-    , entry = getEntry(cmdArgs)
+    , entry = getEntryArg(cmdArgs)
     , settings = {
       "basePath": basePath
       , "manPath": manPath
@@ -69,17 +69,6 @@ function _Run(promise, nodeFs, nodePath, compiler, defaults, nodeDirName, nodePr
       .replace(/\{projects\}/, nodePath.join(nodeProcess.cwd(), "projects"))
       .replace(/\{repos\}/, nodePath.join(nodeProcess.cwd(), "repos"))
       ;
-  }
-  /**
-  * Parses the entry option in the cmdArgs object and return either "all" or an
-  * array representing the manifest entry indexes that will be compiled
-  * @function
-  */
-  function getEntry(cmdArgs) {
-    if (!!cmdArgs.entry) {
-      return cmdArgs.entry.split(",");
-    }
-    return "all";
   }
   /**
   * Loads the manifest file
