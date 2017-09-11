@@ -55,7 +55,10 @@ function _PathParser(nodePath, nodeProcess, nodeDirName) {
     }
 
     //ensure the path has been normalized
-    curPath = nodePath.normalize(curPath)
+    curPath = nodePath.normalize(curPath);
+
+    //make the path fully qualified
+    curPath = nodePath.resolve(curPath);
 
     //parse the path
     curPath =  nodePath.parse(curPath);

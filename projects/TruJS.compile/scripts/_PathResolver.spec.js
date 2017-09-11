@@ -87,17 +87,17 @@ function testPathResolver1(arrange, act, assert, callback, mock, module) {
     test("The 1st call to the dirProcessor should have a path of")
       .run(dirProcessor.getArgs, [0])
       .value("{value}", "[0].path")
-      .equals("\\base\\path");
+      .matches(/[/\\]base[/\\]path/);
 
     test("The 2nd call to the dirProcessor should have a path of")
       .run(dirProcessor.getArgs, [1])
       .value("{value}", "[0].path")
-      .equals("\\base\\path");
+      .matches(/[/\\]base[/\\]path/);
 
     test("The 3rd call to the dirProcessor should have a path of")
       .run(dirProcessor.getArgs, [2])
       .value("{value}", "[0].path")
-      .equals("\\base\\path\\path2");
+      .matches(/[/\\]base[/\\]path[/\\]path2/);
 
     test("The pathProcessor should be called 5 times")
       .value(pathProcessor.callbackCount)

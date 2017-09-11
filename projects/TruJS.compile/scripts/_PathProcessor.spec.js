@@ -91,7 +91,7 @@ function testPathProcessor(arrange, act, assert, module) {
       .isNill();
     test("The 6th results path should be")
       .value(results[4], "path")
-      .equals("\\base\\path");
+      .matches(/[/\\]base[/\\]path/);
 
   });
 }
