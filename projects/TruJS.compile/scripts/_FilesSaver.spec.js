@@ -155,3 +155,45 @@ function testFileSaver3(arrange, act, assert, module, callback) {
 
   });
 }
+
+/**[@test({ "title": "TruJS.compile._FileSaver: file object missing file property" })]*/
+function testFileSaver4(arrange, act, assert, module, callback) {
+  var nodePath, fileSaver, nodeFs, fileObj, filePath, res;
+
+  arrange(function () {
+    nodePath = module(".nodePath");
+    nodeFs = {
+      "writeFile": callback(function (path, data, cb) {
+        cb(null);
+      })
+      , "mkdir": callback(function (dir, cb) {
+        cb();
+      })
+    };
+    fileSaver = module(["TruJS.compile._FilesSaver", [nodeFs]]);
+    filePath = "/base/output.path";
+    fileObj = {
+      "fragment": "path1/path2"
+      , "data": ""
+    };
+  });
+
+  act(function (done) {
+    fileSaver(filePath, [fileObj])
+      .then(function (results) {
+        res = results;
+        done();
+      })
+      .catch(function (err) {
+        res = err;
+        done();
+      });
+  });
+
+  assert(function (test) {
+    test("The res should be an error")
+      .value(res)
+      .isError();
+
+  });
+}
