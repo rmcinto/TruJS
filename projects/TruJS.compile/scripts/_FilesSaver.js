@@ -48,17 +48,22 @@ function _FilesSaver(nodeFs, nodePath, promise) {
     //create the fully qualified path
     filePath = createFilePath(filePath, fileObj);
 
-    //create the directory structure if needed
-    ensureDirectory(filePath, function(err) {
-      if (!!err) {
-        cb(err);
-      }
-      else {
-        //save the file
-        nodeFs.writeFile(filePath, fileObj.data, cb);
-      }
-    });
-
+    //check for error
+    if (isError(filePath)) {
+      cb(filePath);
+    }
+    else {
+      //create the directory structure if needed
+      ensureDirectory(filePath, function(err) {
+        if (!!err) {
+          cb(err);
+        }
+        else {
+          //save the file
+          nodeFs.writeFile(filePath, fileObj.data, cb);
+        }
+      });
+    }
   }
   /**
   * Uses the file fragment to modify the path and adds a file name if one is
@@ -78,6 +83,9 @@ function _FilesSaver(nodeFs, nodePath, promise) {
     if (cnsts.validExts.indexOf(nodePath.extname(filePath)) === -1) {
       if (!!fileObj.file) {
         filePath = nodePath.join(filePath, fileObj.file);
+      }
+      else {
+        return new Error(errors.missingFileProperty);
       }
     }
 
