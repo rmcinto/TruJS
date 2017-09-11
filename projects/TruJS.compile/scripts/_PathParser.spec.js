@@ -27,12 +27,30 @@ function testPathParser1(arrange, act, assert, callback, module) {
   });
 
   assert(function(test) {
-    test("res1 should be").value(res1, "path").equals("\\dirname\\path1");
-    test("res2 should be").value(res2, "path").equals("\\cwd\\path2");
-    test("res3 should be").value(res3, "path").equals("\\cwd\\repos\\path3");
-    test("res4 should be").value(res4, "path").equals("\\cwd\\projects\\path4");
-    test("res5 should be").value(res5, "path").equals("\\cwd\\path5");
-    test("res6 should be").value(res6, "path").equals("\\base\\path6");
+    test("res1 should be")
+      .value(res1, "path")
+      .matches(/[/\\]dirname[/\\]path1/);
+
+    test("res2 should be")
+      .value(res2, "path")
+      .matches(/[/\\]cwd[/\\]path2/);
+
+    test("res3 should be")
+      .value(res3, "path")
+      .matches(/[/\\]cwd[/\\]repos[/\\]path3/);
+
+    test("res4 should be")
+      .value(res4, "path")
+      .matches(/[/\\]cwd[/\\]projects[/\\]path4/);
+
+    test("res5 should be")
+      .value(res5, "path")
+      .matches(/[/\\]cwd[/\\]path5/);
+
+    test("res6 should be")
+      .value(res6, "path")
+      .matches(/[/\\]base[/\\]path6/);
+
   });
 }
 
@@ -56,7 +74,7 @@ function testPathParser2(arrange, act, assert, callback, module) {
   assert(function(test) {
     test("res should be")
       .value(res, "path")
-      .equals("\\dirname\\path1");
+      .matches(/[/\\]dirname[/\\]path1/);
 
   });
 }

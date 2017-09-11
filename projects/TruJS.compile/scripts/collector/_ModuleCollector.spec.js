@@ -63,8 +63,9 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
 
   assert(function (test) {
     test("moduleFileLoader should be called with")
-      .value(moduleFileLoader)
-      .hasBeenCalledWithArg(0, 0, "\\base\\other-module.json");
+      .run(moduleFileLoader.getArgs, [0])
+      .value("{value}", "[0]")
+      .matches(/[/\\]base[/\\]other-module.json/);
 
   });
 }
