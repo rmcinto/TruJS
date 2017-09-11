@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.compile._Compiler: " })]*/
+/**[@test({ "title": "TruJS.compile._Compiler: simple container test" })]*/
 function testCompiler1(arrange, act, assert, promise, callback, module) {
   var compiler, $container, base, manifest, res;
 
@@ -85,7 +85,6 @@ function testCompiler3(arrange, act, assert, promise, callback, module) {
     $container = callback(function (name) {
       var mcb;
       return mcb = modules[modules.length] = callback(function(a, b) {
-
         return promise.resolve([1, 2]);
       });
     });
