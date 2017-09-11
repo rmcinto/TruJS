@@ -9,7 +9,7 @@
 * @param {function} arrayFromArguments A function that transforms arguments to
 *   an array
 */
-function _Compiler(promise, $container, arrayFromArguments, errors) {
+function _Compiler(promise, $container, arrayFromArguments, errors, includes) {
   var cnsts = {
     "collection": "collection"
     , "collector": "collector"
@@ -70,57 +70,6 @@ function _Compiler(promise, $container, arrayFromArguments, errors) {
       return true;
     }
 
-  }
-  /**
-  * Adds the files for the includes
-  * @function
-  */
-  function addIncludes(resolve, reject, manifest, manifestFiles) {
-
-    //loop through the manifest and see if any entries have includes
-    manifest.forEach(function forEachEntry(entry, indx) {
-
-      //add the includes if there are any
-      if (!!entry.include) {
-        entry.include
-          .reverse() //reverse so the position of the include data is preserved
-          .forEach(function forEachInclude(inc) {
-
-            //get the index of the manifest entry by name
-            var incIndx = getManifestIndex(manifest, inc);
-            if (incIndx === -1){
-              reject(new Error(errors.missingInclude.replace("{include}", inc)));
-              return;
-            }
-
-            //create a new data array with the include data at the start
-            // don't worry if there are duplications, file will be overwritten
-            // so the last file in the array will be the one that is preserved
-            manifestFiles[indx] = manifestFiles[incIndx].concat(manifestFiles[indx]);
-
-          });
-      }
-
-    });
-
-    resolve(manifestFiles);
-  }
-  /**
-  * Gets the manifest entry's index in the manifest by name
-  * @function
-  */
-  function getManifestIndex(manifest, name) {
-    var index = -1;
-
-    manifest.every(function(entry, indx) {
-      if (entry.name === name) {
-        index = indx;
-        return false;
-      }
-      return true;
-    });
-
-    return index;
   }
   /**
   * Runs the pre-processor, assembler, formattor, and the post-processor for
@@ -211,9 +160,7 @@ function _Compiler(promise, $container, arrayFromArguments, errors) {
 
     //update with the includes
     proc = proc.then(function (manifestFiles) {
-      return new promise(function (resolve, reject) {
-        addIncludes(resolve, reject, manifest, manifestFiles);
-      });
+      return includes(manifest, manifestFiles);
     });
 
     //process the entries
@@ -221,6 +168,11 @@ function _Compiler(promise, $container, arrayFromArguments, errors) {
       return new promise(function (resolve, reject) {
         processEntries(resolve, reject, manifest, manifestFiles);
       });
+    });
+
+    //add the post include
+    proc = proc.then(function (manifestFiles) {
+      return includes(manifest, manifestFiles, true);
     });
 
     //combine the manifest file with the manifest and update the output path

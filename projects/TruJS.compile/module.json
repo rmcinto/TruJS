@@ -17,6 +17,8 @@
   , "regEx": ["TruJS._RegEx", []]
   , "regExGetMatches": [".regEx.getMatches"]
   , "regExForEachMatch": [".regEx.forEachMatch"]
+  , "number": ["TruJS._Number", []]
+  , "isInteger": [".number.isInteger"]
   , "utilities": ["TruJS.compile._Utilities", []]
   , "getLineEnding": [".utilities.getLineEnding", [], false]
   , "getScriptsDir": [".utilities.getScriptsDir", [], false]
@@ -39,6 +41,7 @@
   , "moduleFileProcessor": ["TruJS.compile._ModuleFileProcessor", []]
   , "modulePathProcessor": ["TruJS.compile._ModulePathProcessor", []]
   , "namer": ["TruJS.compile._Namer", []]
+  , "includes": ["TruJS.compile._Includes", []]
   , "collector": [{
     "collection": ["TruJS.compile.collector._CollectionCollector", []]
     , "files": ["TruJS.compile.collector._CollectionCollector", []]
