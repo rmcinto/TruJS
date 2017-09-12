@@ -1,0 +1,12 @@
+{
+  "invalidCreater": "[InvalidCreater] The key \"{key}\" is not a valid creater function.",
+  "missingCreateProjectName": "[MissingProjectName] The create project command must have a project name.",
+  "missingCreateRepoName": "[MissingRepoName] The create repo command must have a repo name.",
+  "missingProjectRepo": "[MissingProjectRepo] The command requires either a project or repo name.",
+  "missingTestCmd": "[MissingTestCmd] The create test command requires a test property.",
+  "missingFnNameOption": "[MissingFnNameOption] This command requires a \"fnName\" option.",
+  "missingFileOption": "[MissingFileOption] This command requires a \"file\" option.",
+
+  "missingBase": "[MissingBase] There must be either a \"project\" or a \"repo\" entry in the command line arguments.",
+  "invalidOperation": "[InvalidOperation] The key \"{key}\" is not a valid operation function."
+}

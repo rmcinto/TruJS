@@ -1,0 +1,39 @@
+[{
+  "type": "module",
+  "name": "TruJS.cli",
+  "version": "1.0.0",
+  "description": "The TruJS.cli module which exports the TruJS.cli ioc container",
+
+  "hints": {
+    "TruJS.compile": "{projects}/TruJS.compile/scripts",
+    "TruJS": "{repos}/TruJS"
+  },
+
+  "module": {
+    "global": [":global"]
+  },
+
+  "format": "node",
+
+  "output": "./node_modules/{name}/index.js"
+}, {
+  "type": "javascript",
+  "name": "TruJS.cli",
+  "version": "1.0.0",
+  "description": "The TruJS.cli command line utility",
+
+  "files": [
+    "../cli.js"
+  ],
+
+  "format": "none",
+
+  "output": "./node_modules/{name}/cli.js"
+}, {
+  "type": "test",
+  "name": "TruJS.cli",
+  "version": "1.0.0",
+  "description": "The test package for node",
+
+  "output": "./node_modules/{name}/test.json"
+}]
