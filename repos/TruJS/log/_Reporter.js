@@ -34,7 +34,7 @@ function _Reporter(isInteger) {
   * The levels that will fire the handlers
   * @property
   */
-  , levels = [0,1,2,3]
+  , levels = [1,2,3]
   ;
 
   /**
@@ -97,7 +97,7 @@ function _Reporter(isInteger) {
         }
         //loop through each handler and execute each one
         handlers.forEach(function forEachHandler(handler) {
-          handler(msg);
+          handler(msg, level);
         });
       }
     }
