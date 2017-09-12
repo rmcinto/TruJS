@@ -18,6 +18,7 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
     entry = {
       "files": [
         "/base/test3.js"
+        , "+./*js"
       ]
     };
   });
@@ -31,9 +32,13 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
   });
 
   assert(function (test) {
-    test("There should be 9 paths")
+    test("There should be 10 paths")
       .value(res)
-      .hasMemberCountOf(9);
+      .hasMemberCountOf(10);
+
+    test("The 10th path should be")
+      .value(res, "[9]")
+      .equals("+./*js");
 
   });
 }
@@ -264,6 +269,9 @@ function testModuleCollector6(arrange, act, assert, promise, callback, module) {
       .not()
       .hasBeenCalled();
 
+    test("The moduleMerger callback should be called once")
+      .value(moduleMerger)
+      .hasBeenCalled(1);
 
   });
 }
