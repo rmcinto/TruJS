@@ -110,7 +110,7 @@ function testFileObj2(arrange, act, assert, module) {
     test("res.path should be")
       .value(res, "path")
       .matches(/[/\\]base[/\\]path[/\\]file[.]js/);
-console.log(res.path);
+
     test("res.data should be")
       .value(res, "data")
       .equals(data);
