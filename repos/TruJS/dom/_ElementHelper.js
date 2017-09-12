@@ -21,7 +21,6 @@ function _ElementHelper(createElement, createTextNode, getElementById, getElemen
         }
         //check for erroneous el argument
         else if (!!id && !isElement(id)) {
-            console.log(Object.prototype.toString.apply(id));
             throw new Error("The id argument must be a string or an HTMLElement");
         }
         else {

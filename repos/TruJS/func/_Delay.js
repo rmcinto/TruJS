@@ -3,7 +3,7 @@
 *   setTimeout is canceled and a new one starts. Scope and parameters can be changed when the function is delayed
 * @factory
 */
-function _Delay($self, setTimeout, log) {
+function _Delay($self, setTimeout, log, performance) {
 
     /**
     * Creates a `TruJS.func.Delay` object

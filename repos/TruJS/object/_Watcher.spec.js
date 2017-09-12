@@ -46,7 +46,7 @@ function testWatcher2(arrange, act, assert, callback, module, watcherHelper) {
 
     arrange(function () {
         watcherWorker = module(['TruJS.object._Watcher', []]);
-        isWatcher = module('.isWatcher');
+        isWatcher = watcherWorker.isWatcher;
         cnt = 0;
     });
 
@@ -162,7 +162,7 @@ function testWatcher5(arrange, act, assert, callback, module) {
     var watcher, base, obj, final, baseWatcher, objWatcher, finalWatcher, baseListener, objListener, finalListener, cnt;
 
     arrange(function () {
-        watcher = module(['.watcher']);
+        watcher = module(['TruJS.object._Watcher', []]);
         base = {
             "base1": 'base1'
             , "base2": {

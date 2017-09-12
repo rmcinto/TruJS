@@ -14,12 +14,21 @@ function testStack1(arrange, act, assert, module) {
     });
 
     act(function () {
-        func();
+      func();
     });
 
     assert(function (test) {
-        test('The method value for the first stack entry should be').value(res, '[0].method').equals('inner');
-        test('The method value for the second stack entry should be undefined').value(res, '[1].method').isUndef();
-        test('The method value for the third stack entry should be').value(res, '[2].method').equals('outer');
+      test('The method value for the first stack entry should be')
+        .value(res, '[0].method')
+        .equals('inner');
+
+      test('The method value for the second stack entry should be undefined')
+        .value(res, '[1].method')
+        .isUndef();
+        
+      test('The method value for the third stack entry should be')
+        .value(res, '[2].method')
+        .equals('outer');
+
     });
 }

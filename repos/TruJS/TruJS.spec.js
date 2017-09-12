@@ -2,6 +2,10 @@
 function trujsHelperSetup(module) {
   return module("TruJS");
 }
+/**[@test({ "label": "customEvent", "type": "singleton" })]*/
+function trujsHelperSetup2(module) {
+  return module(".customEvent");
+}
 /**[@test({ "title": "TruJS.resolvePath: resolve various path types" })]*/
 function testTruJS1(arrange, act, assert, trujs) {
     var obj, path1, res1, path2, res2, path3, res3;
@@ -141,11 +145,11 @@ function testTruJS6(arrange, act, assert, trujs) {
     });
 }
 /**[@test({ "title": "getType: create some types and check the return value" })]*/
-function testTruJS8(arrange, act, assert, trujs) {
+function testTruJS8(arrange, act, assert, customEvent, trujs) {
     var test1, test2, test3, res1, res2, res3;
 
     arrange(function () {
-        test1 = new CustomEvent('event');
+        test1 = new customEvent('event');
         test2 = ["test"];
         test3 = 4.0;
     });
@@ -239,7 +243,7 @@ function testTruJS11(arrange, act, assert, trujs) {
     });
 }
 /**[@test({ "title": "isElement: test one element and one non-element" })]*/
-function testTruJS12(arrange, act, assert, trujs) {
+function testTruJS12(arrange, act, assert, document, trujs) {
     //shared variables
     var el, nonel, isel1, isel2;
 
@@ -261,12 +265,12 @@ function testTruJS12(arrange, act, assert, trujs) {
     });
 }
 /**[@test({ "title": "isEvent: test one event and one non-event" })]*/
-function testTruJS13(arrange, act, assert, trujs) {
+function testTruJS13(arrange, act, assert, customEvent, trujs) {
     //shared variables
     var evnt, nonevnt, isevnt1, isevnt2;
 
     arrange(function () {
-        evnt = new CustomEvent('test');
+        evnt = new customEvent('test');
         nonevnt = { 'event': 'test' };
         isevnt1 = null;
         isevnt2 = null;

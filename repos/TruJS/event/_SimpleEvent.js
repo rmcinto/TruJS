@@ -2,7 +2,7 @@
 *
 * @factory
 */
-function _SimpleEvent($self, setTimeout, log) {
+function _SimpleEvent($self, setTimeout, log, customEvent) {
     /**
     * Adds a `fn` to the handler array at `name`
     * @function
@@ -73,7 +73,7 @@ function _SimpleEvent($self, setTimeout, log) {
     * @function
     */
     function createEvent(name, data) {
-        return new CustomEvent(name, { detail: data });
+        return new customEvent(name, { detail: data });
     }
     /**
     * Creates the properties object with the `addEventHandler`, `removeEventHandler`, and `dispatchEvent` methods

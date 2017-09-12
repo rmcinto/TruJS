@@ -1,0 +1,32 @@
+[{
+  "type": "module"
+  , "name": "TruJS"
+  , "description": "This is a collection of all the TruJS files for testing purposes"
+
+  , "scripts": ""
+  , "module": {
+    "root": [{ "TruJS": [":TruJS"] }]
+    , "global": [":global"]
+    , "document": [":require(\"min-document\")"]
+    , "XMLHttpRequest": [":require(\"w3c-xmlhttprequest\").XMLHttpRequest"]
+  }
+  , "files": [
+    "./TruJS.js"
+    , "./func/*.js"
+    , "./*.js"
+    , "./ioc/*.js"
+    , "+./*.js"
+    , "-*.spec.js"
+  ]
+
+  , "format": "node"
+
+  , "output": "./node_modules/{name}/index.js"
+}, {
+  "type": "test"
+  , "name": "TruJS"
+
+  , "scripts": ""
+
+  , "output": "./node_modules/{name}/test.json"
+}]
