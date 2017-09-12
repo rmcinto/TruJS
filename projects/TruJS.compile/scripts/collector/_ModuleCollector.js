@@ -19,7 +19,7 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
   */
   function getModulePaths(base, entry) {
     var baseModule = entry.baseModule, modulePaths = []
-    , curModule = pathParser(base, entry.moduleFile || cnsts.module);
+    , curModule;
 
     //if there is a baseModule entry, add that to the modulePaths
     if (!!baseModule) {
@@ -37,7 +37,10 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
     }
 
     //add the current entry's module path at the end
-    modulePaths.push(curModule);
+    if (entry.moduleFile !== "") {
+      curModule = pathParser(base, entry.moduleFile || cnsts.module);
+      modulePaths.push(curModule);
+    }
 
     return modulePaths;
   }
@@ -104,8 +107,15 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
     //get an array of all the module files we're going to load
     , modulePaths = getModulePaths(base, entry);
 
+
+    var proc = promise.resolve([]);
+
     //get the module file data
-    var proc = loadModules(modulePaths);
+    if (!isEmpty(modulePaths)) {
+      proc = proc.then(function () {
+        return loadModules(modulePaths);
+      });
+    }
 
     //merge all of the module objects
     proc = proc.then(function (modules) {

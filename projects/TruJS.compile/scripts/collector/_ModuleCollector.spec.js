@@ -39,7 +39,7 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.compile.collector._ModuleCollector: moduleFile parameter" })]*/
-function testModuleCollector1(arrange, act, assert, promise, callback, module) {
+function testModuleCollector2(arrange, act, assert, promise, callback, module) {
   var moduleCollector, moduleFileLoader, moduleFileProcessor, base, entry;
 
   arrange(function () {
@@ -71,7 +71,7 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.compile.collector._ModuleCollector: baseModule parameter" })]*/
-function testModuleCollector1(arrange, act, assert, promise, callback, module) {
+function testModuleCollector3(arrange, act, assert, promise, callback, module) {
   var moduleCollector, moduleFileLoader, moduleFileProcessor, base, entry;
 
   arrange(function () {
@@ -117,7 +117,7 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.compile.collector._ModuleCollector: multiple baseModule parameter, no file name" })]*/
-function testModuleCollector1(arrange, act, assert, promise, callback, module) {
+function testModuleCollector4(arrange, act, assert, promise, callback, module) {
   var moduleCollector, moduleFileLoader, moduleFileProcessor, base, entry;
 
   arrange(function () {
@@ -171,7 +171,7 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
 }
 
 /**[@test({ "title": "TruJS.compile.collector._ModuleCollector: module parameter" })]*/
-function testModuleCollector1(arrange, act, assert, promise, callback, module) {
+function testModuleCollector5(arrange, act, assert, promise, callback, module) {
   var moduleCollector, paths, curModule, entryModule, collector_collection, moduleFileLoader, moduleFileProcessor, modulePathProcessor, moduleMerger, base, entry, res;
 
   arrange(function () {
@@ -219,6 +219,51 @@ function testModuleCollector1(arrange, act, assert, promise, callback, module) {
       .run(moduleMerger.getArgs, [0])
       .value("{value}", "[0][1]")
       .equals(entryModule);
+
+  });
+}
+
+/**[@test({ "title": "TruJS.compile.collector._ModuleCollector: module parameter, empty string moduleFile parameter" })]*/
+function testModuleCollector6(arrange, act, assert, promise, callback, module) {
+  var moduleCollector, paths, curModule, entryModule, collector_collection, moduleFileLoader, moduleFileProcessor, modulePathProcessor, moduleMerger, base, entry, res;
+
+  arrange(function () {
+    paths = [
+      "/base/test1.js"
+      , "/base/test2.js"
+    ];
+    curModule = {};
+    entryModule = {
+      "test3": ["", []]
+    };
+    moduleFileLoader = callback(promise.resolve(curModule));
+    moduleMerger = callback({});
+    moduleFileProcessor = callback(promise.resolve());
+    modulePathProcessor = callback(promise.resolve(paths));
+    collector_collection = callback(promise.resolve());
+    moduleCollector = module(["TruJS.compile.collector._ModuleCollector", [, collector_collection, , , , moduleFileLoader, moduleFileProcessor, modulePathProcessor,,moduleMerger]]);
+    base = "/base";
+    entry = {
+      "module": entryModule
+      , "moduleFile": ""
+    };
+  });
+
+  act(function (done) {
+    moduleCollector(base, entry)
+      .then(function (results) {
+        res = results;
+        done();
+      })
+  });
+
+  assert(function (test) {
+
+    test("The moduleFileLoader callback should not be called")
+      .value(moduleFileLoader)
+      .not()
+      .hasBeenCalled();
+
 
   });
 }
