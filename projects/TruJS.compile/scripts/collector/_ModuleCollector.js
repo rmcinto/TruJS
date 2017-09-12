@@ -91,9 +91,7 @@ function _ModuleCollector(promise, collector_collection, defaults, pathParser, g
   */
   function addEntryFiles(scriptsPath, paths, files) {
     if(!!files) {
-      files.forEach(function forEachEntryFile(path) {
-        paths.push(pathParser(scriptsPath, path).path);
-      });
+      return paths.concat(files);
     }
     return paths;
   }
