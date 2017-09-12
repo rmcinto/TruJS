@@ -47,38 +47,43 @@ function testInspector1(arrange, act, assert, module) {
 }
 /**[@test({ "title": "TruJS.func.Inspector: getBody" })]*/
 function testInspector2(arrange, act, assert, module) {
-    var fnInspector, func1, insp1, func2, insp2, body1, body2;
+  var fnInspector, func1, insp1, func2, insp2, body1, body2;
 
-    arrange(function arrangeFunc() {
-        fnInspector = module(['TruJS.func._Inspector', []]);
-        func1 = function test(var1, var2) {
-            var a = {}
-            ;
-            //comments with { }
-            a = "string with {  }";
-        };
+  arrange(function arrangeFunc() {
+    fnInspector = module(['TruJS.func._Inspector', []]);
+    func1 = function test(var1, var2) {
+      var a = {}
+      ;
+      //comments with { }
+      a = "string with {  }";
+    };
 
-        func2 = "function(){var b='1234 { }'; }";
-        insp1 = fnInspector(func1);
-        insp2 = fnInspector(func2);
-    });
+    func2 = "function(){var b='1234 { }'; }";
+    insp1 = fnInspector(func1);
+    insp2 = fnInspector(func2);
+  });
 
-    act(function actFunc() {
-        body1 = insp1.body;
-        body2 = insp2.body;
-    });
+  act(function actFunc() {
+    body1 = insp1.body;
+    body2 = insp2.body;
+  });
 
-    assert(function assertFunc(test) {
-        test('body1 should be').value(body1).equals('var a={}; a="string with {  }";');
-        test('body2 should be').value(body2).equals("var b='1234 { }';");
-    });
+  assert(function assertFunc(test) {
+    test('body1 should be')
+      .value(body1)
+      .equals('var a = {}\r\n      ;\r\n      //comments with { }\r\n      a = \"string with {  }\";');
+
+    test('body2 should be')
+      .value(body2)
+      .equals("var b='1234 { }';");
+  });
 }
 /**[@test({ "title": "TruJS.func.Inspector: regression, no space between ) and {" })]*/
-function testInspector3(arrange, act, assert) {
+function testInspector3(arrange, act, assert, module) {
     var fnInspector, func, insp;
 
     arrange(function arrangeFunc() {
-        fnInspector = container(['TruJS.func._Inspector', []]);
+        fnInspector = module(['TruJS.func._Inspector', []]);
         func = 'function (var1){\nconsole.log("test"); \n}';
     });
 
@@ -92,11 +97,11 @@ function testInspector3(arrange, act, assert) {
     });
 }
 /**[@test({ "title": "TruJS.func.Inspector: regression, \/**\/ in params" })]*/
-function testInspector4(arrange, act, assert) {
+function testInspector4(arrange, act, assert, module) {
     var fnInspector, func, insp;
 
     arrange(function arrangeFunc() {
-        fnInspector = container(['TruJS.func._Inspector', []]);
+        fnInspector = module(['TruJS.func._Inspector', []]);
         func = 'function (var1\n/**/){\nconsole.log("test"); \n}';
     });
 

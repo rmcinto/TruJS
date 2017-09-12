@@ -127,7 +127,7 @@ function _String(arrayOfType) {
                       val.push(cur);
                   }
                   //see if this is the end
-                  if (c === this.length - 1) {
+                  if (c === str.length - 1) {
                       //see if there is data to process
                       if (!isEmpty(val)) {
                           //join the value array

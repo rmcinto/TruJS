@@ -3,7 +3,7 @@ function testAntiXss(arrange, act, assert, module) {
     var antiXss, html1, html2, val1, res1, val2, res2;
 
     arrange(function () {
-      antiXss = module("TruJS.security.AntiXss");
+      antiXss = module(["TruJS.security._AntiXss", []]);
       html1 = '<div onclick="window.alert(\'msg\');">Some Content with onload in it</div>';
       html2 = '<a href="javascript:alert(\'msg\');">My Link</a>';
       val1 = null;
@@ -20,7 +20,13 @@ function testAntiXss(arrange, act, assert, module) {
     });
 
     assert(function (test) {
-      test('The val1 variable should match res1').value(val1).equals(res1);
-      test('The val2 variable should match res2').value(val2).equals(res2);
+      test('The val1 variable should match res1')
+        .value(val1)
+        .equals(res1);
+
+      test('The val2 variable should match res2')
+        .value(val2)
+        .equals(res2);
+
     });
 }

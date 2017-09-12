@@ -3,7 +3,7 @@
     var lookup, obj, name1, name2, var1, var2, name3, var3;
 
     arrange(function () {
-      lookup = module(["TruJS._Object", []).lookup;
+      lookup = module(["TruJS._Object", []]).lookup;
       obj = {
           items: [{
               "name": 'value1'
@@ -36,7 +36,7 @@ function testObject2(arrange, act, assert, module) {
     var isMatch, obj1, obj2, obj3, res1, res2, res3;
 
     arrange(function () {
-      isMatch = module(["TruJS._Object", []).isMatch;
+      isMatch = module(["TruJS._Object", []]).isMatch;
       obj1 = {
           "var1": 'test1'
           , "var2": 'test2'
@@ -69,7 +69,7 @@ function testObject3(arrange, act, assert, module) {
     var allKeys, base, obj, keys;
 
     arrange(function () {
-        allKeys = module(["TruJS._Object", []).allKeys;
+        allKeys = module(["TruJS._Object", []]).allKeys;
 
         base = {
             "base1": 'base1'
@@ -92,12 +92,12 @@ function testObject3(arrange, act, assert, module) {
         test('There should be a key "base1" in the keys array').value(keys).hasMember('base1');
     });
 }
-/**[@test({ "title": "TruJS.Object.copy: copy and object an ensure it\'s deep" })]*/
+/**[@test({ "title": "TruJS.Object.copy: copy and object an ensure it''s deep" })]*/
 function testObject4(arrange, assert, act, module) {
     var obj, copiedObj, copy;
 
     arrange(function () {
-        copy = module(["TruJS._Object", []).copy;
+        copy = module(["TruJS._Object", []]).copy;
         obj = {
             "obj2": {
                 "value21": 'value21'

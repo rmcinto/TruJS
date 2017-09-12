@@ -94,7 +94,7 @@ function applyIf(o, t, d, rn) {
     }
     return t;
 }
-applyIf = applyIf;
+TruJS.applyIf = applyIf;
 
 /**
 * Removes all null members from the object
