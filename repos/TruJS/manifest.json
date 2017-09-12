@@ -10,14 +10,6 @@
     , "document": [":require(\"min-document\")"]
     , "XMLHttpRequest": [":require(\"w3c-xmlhttprequest\").XMLHttpRequest"]
   }
-  , "files": [
-    "./TruJS.js"
-    , "./func/*.js"
-    , "./*.js"
-    , "./ioc/*.js"
-    , "+./*.js"
-    , "-*.spec.js"
-  ]
 
   , "format": "node"
 

@@ -7,6 +7,7 @@
   , "array": ["TruJS._Array", []]
   , "arrayOfType": [".array.ofType"]
   , "number": ["TruJS._Number", []]
+  , "isInteger": [".number.isInteger"]
   , "object": ["TruJS._Object", []]
   , "objectAllKeys": [".object.allKeys"]
   , "objectCopy": [".object.copy"]
