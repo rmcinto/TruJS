@@ -74,7 +74,7 @@ function testNamer3(arrange, act, assert, module) {
 }
 
 /**[@test({ "title": "TruJS.compile._Namer: naming annotaion with skip"})]*/
-function testNamer1(arrange, act, assert, module) {
+function testNamer4(arrange, act, assert, module) {
   var namer, entry, fileObj, res;
 
   arrange(function () {
@@ -99,7 +99,7 @@ function testNamer1(arrange, act, assert, module) {
 }
 
 /**[@test({ "title": "TruJS.compile._Namer: naming annotaion with skip and namespace"})]*/
-function testNamer1(arrange, act, assert, module) {
+function testNamer5(arrange, act, assert, module) {
   var namer, entry, fileObj, res;
 
   arrange(function () {
@@ -124,7 +124,7 @@ function testNamer1(arrange, act, assert, module) {
 }
 
 /**[@test({ "title": "TruJS.compile._Namer: no naming annotaion no defaultRoot"})]*/
-function testNamer1(arrange, act, assert, module) {
+function testNamer6(arrange, act, assert, module) {
   var namer, entry, fileObj, res;
 
   arrange(function () {
@@ -149,7 +149,7 @@ function testNamer1(arrange, act, assert, module) {
 }
 
 /**[@test({ "title": "TruJS.compile._Namer: non js/json"})]*/
-function testNamer1(arrange, act, assert, module) {
+function testNamer7(arrange, act, assert, module) {
   var namer, fileObj, res;
 
   arrange(function () {
@@ -171,5 +171,31 @@ function testNamer1(arrange, act, assert, module) {
       .value(res)
       .stringify()
       .equals("{\"name\":\"test.widgets.TestHtml\",\"namespace\":\"test.widgets\"}");
+  });
+}
+
+/**[@test({ "title": "TruJS.compile._Namer: fragment in fileObj"})]*/
+function testNamer8(arrange, act, assert, module) {
+  var namer, entry, fileObj, res;
+
+  arrange(function () {
+    namer = module(["TruJS.compile._Namer", []]);
+    fileObj = {
+      "name": "_Test"
+      , "dir": "/base/project/test"
+      , "fragment": "widgets"
+      , "data": "function () {}"
+    };
+  });
+
+  act(function () {
+    res = namer(null, fileObj);
+  });
+
+  assert(function (test) {
+    test("The naming object should be")
+      .value(res)
+      .stringify()
+      .equals("{\"name\":\"base.project.test.widgets._Test\",\"namespace\":\"base.project.test.widgets\"}");
   });
 }

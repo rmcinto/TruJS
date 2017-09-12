@@ -4,7 +4,7 @@
 * object with the namespace and name.
 * @factory
 */
-function _Namer(annotation, stringTrim, defaults) {
+function _Namer(annotation, stringTrim, defaults, nodePath) {
   var SPLIT_PATT = /[\\/.]/g
   , cnsts = {
     "namespaceEndings": ["projects", "repos"]
@@ -31,7 +31,7 @@ function _Namer(annotation, stringTrim, defaults) {
       naming.name = naming.name || determineName(fileObj);
 
       //extract the namespace from the base directory
-      naming.namespace = naming.namespace || extractNamespace(fileObj.dir, root);
+      naming.namespace = naming.namespace || extractNamespace(fileObj, root);
 
       //if the name starts with - then remove it, that's a special convention
       //for namespacing
@@ -55,8 +55,9 @@ function _Namer(annotation, stringTrim, defaults) {
   * Gets the namespace from the file path base
   * @function
   */
-  function extractNamespace(dir, root) {
+  function extractNamespace(fileObj, root) {
     var found
+    , dir = !!fileObj.fragment && nodePath.join(fileObj.dir, fileObj.fragment) || fileObj.dir
     , namespace = dir.split(SPLIT_PATT)
       .reverse()
       .map(function(part) {
