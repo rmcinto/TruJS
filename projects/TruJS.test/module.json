@@ -87,6 +87,8 @@
     , "element": [".mockElement"]
     , "xmlHttpRequest": [".mockXMLHttpRequest"]
     , "promise": [".promise"]
+    , "document": [".document"]
+    , "window": [".global"]
   }]
   , "run": ["TruJS.test._Run", []]
   , "errors": ["TruJS.test.Errors", [], false]

@@ -3,9 +3,6 @@
 * @object
 */
 function _Utilities(nodePath, defaults) {
-  var cnsts = {
-    "scriptsDir": "scripts"
-  };
 
   return Object.create(null, {
     /**
@@ -22,7 +19,8 @@ function _Utilities(nodePath, defaults) {
       }
     }
     /**
-    * Adds the scripts diretory to the base path based on the manifest entry
+    * Adds the scripts directory to the base path, using the entry.scripts value
+    * if exists, otherwise uses the defaults.scriptsDir
     * @function
     */
     , "getScriptsDir": {
