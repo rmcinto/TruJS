@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.event._SimpleEvent: unit test" })]*/
+/**[@test({ "title": "TruJS.event._SimpleEvent: unit test", "format": "browser" })]*/
 function testSimpleEvent1(arrange, act, assert, module, callback) {
     var eventWorker, setTimeout, eventObj, listener1, listener2, listener3, data1, data2;
 

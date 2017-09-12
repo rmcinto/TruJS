@@ -1,4 +1,4 @@
-/**[@test({ "label": "elementHelperSetup", "type": "factory" })]*/
+/**[@test({ "label": "elementHelperSetup", "type": "factory", "format": "browser" })]*/
 function elementHelperSetup(element, callback, module) {
     var body = element({
         "tagName": 'BODY'
@@ -33,7 +33,7 @@ function elementHelperSetup(element, callback, module) {
     //return the setup object
     return setup;
 }
-/**[@test({ "title": "TruJS.dom._ElementHelper: create with innerHtml" })]*/
+/**[@test({ "title": "TruJS.dom._ElementHelper: create with innerHtml", "format": "browser" })]*/
 function testElementHelper1(arrange, act, assert, elementHelperSetup) {
     var cfg, el;
 
@@ -77,7 +77,7 @@ function testElementHelper1(arrange, act, assert, elementHelperSetup) {
         test('The parent should be the mocked body').value(el, 'parentElement').equals(elementHelperSetup.body);
     });
 }
-/**[@test({ "title": "TruJS.dom._ElementHelper: create with children array" })]*/
+/**[@test({ "title": "TruJS.dom._ElementHelper: create with children array", "format": "browser" })]*/
 function testElementHelper2(arrange, act, assert, elementHelperSetup) {
     var cfg, el;
 

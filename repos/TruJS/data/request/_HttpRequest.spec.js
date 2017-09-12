@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.data.request._HttpRequest: unit test" })]*/
+/**[@test({ "title": "TruJS.data.request._HttpRequest: unit test", "format": "browser" })]*/
 function dataRequest(arrange, act, assert, callback, mock, xmlHttpRequest, module) {
   var xhr, sendFn, errFn, httpRequest, request, cb, err;
 

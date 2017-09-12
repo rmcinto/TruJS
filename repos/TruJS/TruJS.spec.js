@@ -144,7 +144,7 @@ function testTruJS6(arrange, act, assert, trujs) {
         test('Var4 should be missing').value(obj1).not().hasProperty("var4");
     });
 }
-/**[@test({ "title": "getType: create some types and check the return value" })]*/
+/**[@test({ "title": "getType: create some types and check the return value", "format": "browser" })]*/
 function testTruJS8(arrange, act, assert, customEvent, trujs) {
     var test1, test2, test3, res1, res2, res3;
 
