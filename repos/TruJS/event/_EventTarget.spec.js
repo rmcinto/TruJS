@@ -1,4 +1,4 @@
-/**[@test({ "title": "TruJS.event._EventTarget: create an object, add event target, dispatch standard event" })]*/
+/**[@test({ "title": "TruJS.event._EventTarget: create an object, add event target, dispatch standard event", "format": "browser" })]*/
 function testEventTarget1(arrange, act, assert, callback, mock, module) {
     var _EventTarget, cfg, cnt, mockEvent, mockMouseConst, eventTarget, obj, handler, opts, data;
 
@@ -44,7 +44,7 @@ function testEventTarget1(arrange, act, assert, callback, mock, module) {
       test('The handlers first arg should be the mocked event').value(handler).hasBeenCalledWithArg(0, 0, mockEvent.$instance);
     });
 }
-/**[@test({ "title": "TruJS.event._EventTarget: create an object, add event target, dispatch non-standard event" })]*/
+/**[@test({ "title": "TruJS.event._EventTarget: create an object, add event target, dispatch non-standard event", "format": "browser" })]*/
 function testEventTarget2(arrange, act, assert, callback, mock, module) {
     var _EventTarget, cfg, cnt, mockEvent, mockMouseConst, eventTarget, obj, handler, opts, data;
 
