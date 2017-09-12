@@ -6,6 +6,7 @@
   , "nodeProcess": [":process"]
   , "nodeDirName": [":__dirname"]
   , "uglify": [":require(\"uglify-js\")"]
+  , "sassRender": [":require(\"node-sass\").render"]
   , "string": ["TruJS._String", []]
   , "stringTrim": [".string.trim"]
   , "stringToArray": [".string.toArray"]
@@ -48,6 +49,7 @@
     , "javascript": ["TruJS.compile.collector._CollectionCollector", []]
     , "module": ["TruJS.compile.collector._ModuleCollector", []]
     , "test": ["TruJS.compile.collector._TestCollector", []]
+    , "sass": ["TruJS.compile.collector._SassCollector", []]
   }]
   , "preProcessor": [{
     "javascript": ["TruJS.compile.preProcessor._JavaScriptPreProcessor", []]
@@ -58,6 +60,7 @@
     "javascript": ["TruJS.compile.assembler._JavaScriptAssembler", []]
     , "module": ["TruJS.compile.assembler._JavaScriptAssembler", []]
     , "test": ["TruJS.compile.assembler._TestAssembler", []]
+    , "sass": ["TruJS.compile.assembler._SassAssembler", []]
   }]
   , "formatter": [{
     "javascript": ["TruJS.compile.formatter._JavaScriptFormatter", []]
@@ -67,6 +70,7 @@
   , "postProcessor": [{
     "javascript": ["TruJS.compile.postProcessor._JavaScriptPostProcessor", []]
     , "module": ["TruJS.compile.postProcessor._JavaScriptPostProcessor", []]
+    , "sass": ["TruJS.compile.postProcessor._SassPostProcessor", []]
   }]
   , "minifiers": [{
     "javascript": ["TruJS.compile.minifier._JavaScriptMinifier", []]
