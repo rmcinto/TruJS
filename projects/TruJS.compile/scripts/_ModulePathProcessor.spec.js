@@ -87,3 +87,43 @@ function testModulePathProcessor2(arrange, act, assert, callback, module) {
 
   });
 }
+
+/**[@test({ "title": "TruJS.compile._ModulePathProcessor: empty pathsObj"})]*/
+function testModulePathProcessor2(arrange, act, assert, callback, module) {
+  var modulePathProcessor, nodeFs, scriptsPath, pathsObj, res;
+
+  arrange(function () {
+    nodeFs = {
+      "stat": callback(function (path, cb) {
+        cb("fail");
+      })
+    };
+    modulePathProcessor = module(["TruJS.compile._ModulePathProcessor", [, nodeFs]]);
+    scriptsPath = "/base/scripts";
+    pathsObj = {};
+  });
+
+  act(function (done) {
+    modulePathProcessor(scriptsPath, pathsObj)
+      .then(function (results) {
+        res = results;
+        done();
+      })
+      .catch(function (err) {
+        res = err;
+        done();
+      });
+  });
+
+  assert(function (test) {
+    test("res should not be an error")
+      .value(res)
+      .not()
+      .isError();
+
+    test("res should be empty")
+      .value(res)
+      .isEmpty();
+
+  });
+}

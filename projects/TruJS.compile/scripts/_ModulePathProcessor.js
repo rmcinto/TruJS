@@ -166,6 +166,11 @@ function _ModulePathProcessor(promise, nodeFs, pathParser, errors, defaults) {
   */
   return function ModulePathProcessor(scriptsPath, pathsObj) {
 
+    //failsafe, if pathsObj is empty then our processPaths method will never resolve
+    if (isEmpty(pathsObj)) {
+      return promise.resolve([]);
+    }
+    
     //go through each path
     return new promise(function (resolve, reject) {
       processPaths(resolve, reject, scriptsPath, pathsObj);
