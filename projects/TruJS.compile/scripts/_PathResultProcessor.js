@@ -14,12 +14,15 @@ function _PathResultProcessor(nodePath, regExGetMatches, stringTrim) {
     if (!!pathObj.wildcard || !!pathObj.fragment) {
 
       //add the path
-      var filter = "(" + updateReserved(!!pathObj.path && (stringTrim(pathObj.path, "[\\/\\\\]", "end")) || "*") + ")";
+      var filter = "(" + updateReserved(!!pathObj.path && stringTrim(pathObj.path, "[\\/\\\\]", "end") || "*") + ")";
       //add the fragment
       if (!!pathObj.fragment) {
         filter = filter + "[/\\\\](" + updateReserved(pathObj.fragment) + ")";
       }
       else if (!!pathObj.options.recurse) {
+        filter = filter + "(?:[/\\\\](.*))?"; //allow all child paths
+      }
+      else if(pathObj.minus && !pathObj.path) {
         filter = filter + "(?:[/\\\\](.*))?"; //allow all child paths
       }
       else {
