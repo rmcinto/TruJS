@@ -8,6 +8,8 @@
   , "originTimestamp": [":Date.now()"]
   , "performance": ["TruJS.timing._Performance",[]]
   , "functionInspector": ["TruJS.func._Inspector", []]
+  , "number": ["TruJS._Number", []]
+  , "isInteger": [".number.isInteger"]
   , "object": ["TruJS._Object", []]
   , "objectIsMatch": [".object.isMatch"]
   , "objectLookup": [".object.lookup"]
@@ -27,6 +29,7 @@
   , "async": ["TruJS.func._Async", []]
   , "elementHelper": ["TruJS.dom._ElementHelper", []]
   , "classHelper": ["TruJS.dom._ClassHelper", []]
+  , "logReporter": ["TruJS.log._Reporter", []]
   , "log": ["TruJS.log._Log", []]
   , "mock": ["TruJS.test.mock._Mock", []]
   , "mockGetStack": true
