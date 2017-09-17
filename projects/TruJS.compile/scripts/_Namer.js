@@ -107,7 +107,7 @@ function _Namer(annotation, stringTrim, defaults, nodePath) {
   /**
   * @worker
   */
-  return function Namer(root, fileObj) {
-    return nameFile(root, fileObj);
+  return function Namer(entry, fileObj) {
+    return nameFile(entry, fileObj);
   }
 }

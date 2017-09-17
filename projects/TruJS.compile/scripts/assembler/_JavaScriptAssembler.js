@@ -45,7 +45,7 @@ function _JavaScriptAssembler(promise, annotation, nodePath, stringTrim, getLine
     //loop through the file objects, process each, and add the result to the
     //data array
     files.forEach(function (fileObj) {
-      data.push(processFileData(entry, fileObj, namespaces));
+      data.push(nameFileData(entry, fileObj, namespaces));
     });
 
     lineEnding = getLineEnding(data);
@@ -63,7 +63,7 @@ function _JavaScriptAssembler(promise, annotation, nodePath, stringTrim, getLine
   * Runs the namer and determines if the name should be added to the file data
   * @function
   */
-  function processFileData(entry, fileObj, namespaces) {
+  function nameFileData(entry, fileObj, namespaces) {
     var naming = namer(entry.root, fileObj)
     , fileData = fileObj.data
     , matcher;
