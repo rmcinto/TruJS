@@ -8,8 +8,18 @@
 function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, annotation, namer, fileObj) {
   var cnsts = {
     "annotaionName": "route"
-    , "defaultIndex": 999
-    , "defaultType": "route"
+    , "defaults": {
+      "index": 999
+      , "type": "route"
+      , "appName": "app"
+      , "method": "all"
+      , "path": "/"
+    }
+    , "dependencies": {
+      "nodeExpress": [":require(\"express\")"]
+      , "nodeHttp": [":require(\"http\")"]
+      , "nodeHttps": [":require(\"https\")"]
+    }
   };
 
   /**
@@ -51,7 +61,14 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       //set the factory name on the route object
       route.name = route.name || naming.name;
       //set the default type
-      route.type = route.type || cnsts.defaultType;
+      route.type = route.type || cnsts.defaults.type;
+      route.method = route.method || cnsts.defaults.method;
+      route.path = route.path || cnsts.defaults.path;
+      //type specific defaults
+      if (route.type === "app") {
+        route.label = route.label || cnsts.defaults.appName;
+        route.index = route.index || cnsts.defaults.index;
+      }
     }
     return route;
   }
@@ -66,9 +83,7 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       , rts = routes.filter(function filterApps(route) { return route.type !== "app"; })
       ;
       //sort the apps
-      apps.sort(sorter);
-      //sorts the routes
-      rts.sort(sorter);
+      apps.sort(reverseSorter);
       //recombine the apps and routes
       resolve(apps.concat(rts));
     }
@@ -77,17 +92,15 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     }
   }
   /**
-  * A sorter that uses the index property or the default index
+  * A sorter that uses the index property to sort the array in reverse
   * @function
   */
-  function sorter(a, b) {
-    a.index = isNill(a.index) ? cnsts.defaultIndex : a.index;
-    b.index = isNill(b.index) ? cnsts.defaultIndex : b.index;
+  function reverseSorter(a, b) {
     if (a.index < b.index) {
-      return -1;
+      return 1;
     }
     if (a.index > b.index) {
-      return 1;
+      return -1;
     }
     return 0;
   }
@@ -95,30 +108,76 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
   * Adds the app and route entries to the module object
   * @function
   */
-  function addRoutes(resolve, reject, entry, routes) {
+  function updateModule(resolve, reject, entry, routes) {
     try {
       //add the $$server$$ entry to the module
       entry.module["$$server$$"] = entry.module["$$server$$"] || [{}];
 
       //get the $$server$$ object for easy adding
       var server = entry.module["$$server$$"][0]
+      , apps = server["apps"] = (server["apps"] || [{}])
+      , rtes = server["routes"] = (server["routes"] || [{}])
+      , curApp
       , appIndx = 0
       , routeIndx = 0
       ;
-      //add the app and route properties
-      server["apps"] = server["apps"] || [{}];
-      server["routes"] = server["routes"] || [{}];
 
       //loop through the routes and update the server object
       routes.forEach(function forEachRoute(route) {
+        var routeList;
+
+        //special processing for routes of type app
         if (route.type === "app") {
-          server.apps[0]["app" + appIndx] = [route.name, [route]];
+          //see if we need to add the app to the apps entry
+          if(!apps[0].hasOwnProperty(route.label)) {
+            apps[0][route.label] = { "label": route.label, "routes": {} };
+          }
+          //a reference to the app object
+          curApp = apps[0][route.label];
+          //a reference to the array of routes
+          routeList = curApp.routes[route.path];
+          //add the path entry to the routes object if missing
+          if(!routeList) {
+            routeList = curApp.routes[route.path] = [];
+          }
+          //add any routes to the route collection for this path
+          if(!!route.routes) {
+            //ensure the routes property is an array
+            !isArray(route.routes) && (route.routes = route.routes.split(","));
+            //loop through each route, only add a route if it hasn't been yet
+            route.routes.forEach(function forEachRoute(route) {
+              if (routeList.indexOf(route) === -1) {
+                routeList.push(route);
+              }
+            });
+          }
+          //modify the label for the routes collection
+          route.label = "appRoute" + appIndx;
           appIndx++;
+          //insert the new label into the routes array, this is why we sorted in reverse
+          routeList.splice(0, 0, route.label);
+          //clear out the route path since the route will be added to the app with the path, we don't want the router to have a path also
+          delete route.path;
         }
-        else {
-          server.routes[0]["route" + routeIndx] = [route.name, [route]];
+
+        //ensure we have a label
+        if (!route.label) {
+          route.label = "route" + routeIndx;
           routeIndx++;
         }
+
+        //clean up the route object
+        delete route.$index;
+        delete route.$line;
+        delete route.index;
+        delete route.routes;
+
+        //add the route entry
+        rtes[0][route.label] = [{
+          "factory": [route.name, []]
+          , "meta": route
+        }];
+
       });
 
       resolve();
@@ -127,6 +186,20 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       reject(ex);
     }
   }
+  /**
+  * Add the required dependencies for the routing
+  * @function
+  */
+  function addDependencies(resolve, reject, entry) {
+    try {
+      applyIf(cnsts.dependencies, entry.module);
+      resolve();
+    }
+    catch(ex) {
+      reject(ex);
+    }
+  }
+
   /**
   * Adds the server fileObj to the files array
   * @function
@@ -166,7 +239,14 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     //create the route entries in the module object
     proc = proc.then(function (routes) {
       return new promise(function (resolve, reject) {
-        addRoutes(resolve, reject, entry, routes);
+        updateModule(resolve, reject, entry, routes);
+      });
+    });
+
+    //add the required dependencies
+    proc = proc.then(function () {
+      return new promise(function (resolve, reject) {
+        return addDependencies(resolve, reject, entry);
       });
     });
 
