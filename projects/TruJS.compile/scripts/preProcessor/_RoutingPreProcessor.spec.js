@@ -16,19 +16,34 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       , "name": "file1"
       , "dir": "My"
     }, {
-      "data": "/**[@route({ \"name\": \"My.Name\", \"index\": 0 })]*/"
+      "data": "/**[@route({ \"name\": \"My.Name\", \"label\": \"myroute\" })]*/"
       , "ext": ".js"
       , "name": "file2"
       , "dir": "My"
     }, {
-      "data": "/**[@route({ \"type\": \"app\" })]*/"
+      "data": "/**[@route({ \"type\": \"app\", \"index\": 1, \"routes\": \"route0,myroute\", \"path\": \"/\" })]*/"
       , "ext": ".js"
       , "name": "file3"
       , "dir": "My"
     }, {
-      "data": ""
+      "data": "/**[@route({ \"type\": \"app\", \"label\": \"auth\", \"routes\": [\"myroute\"] })]*/"
+      , "ext": ".js"
+      , "name": "file3"
+      , "dir": "My"
+    }, {
+      "data": "/**[@route({ \"type\": \"app\", \"index\": 0, \"label\": \"app\", \"routes\": \"myroute\", \"path\": \"/order\" })]*/"
+      , "ext": ".js"
+      , "name": "file3"
+      , "dir": "My"
+    }, {
+      "data": "/**[@route({ \"type\": \"route\" })]*/"
       , "ext": ".js"
       , "name": "file4"
+      , "dir": "My"
+    }, {
+      "data": ""
+      , "ext": ".js"
+      , "name": "file5"
       , "dir": "My"
     }];
   });
@@ -51,45 +66,48 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       .not()
       .isError();
 
-    test("module should have 1 property")
+    test("entry.module should have 4 properties")
       .value(entry, "module")
-      .hasPropertyCountOf(1);
+      .hasPropertyCountOf(4);
 
-    test("module.$$server$$ should have 2 properties")
+    test("$$server$$ should have 2 properties")
       .value(entry, "module.$$server$$[0]")
       .hasPropertyCountOf(2);
 
-    test("module.$$server$$.apps should have 1 property")
-      .value(entry, "module.$$server$$[0].apps[0]")
-      .hasPropertyCountOf(1);
 
-    test("module.$$server$$.routes should have 2 properties")
-      .value(entry, "module.$$server$$[0].routes[0]")
+    test("$$server$$ apps should have 2 properties")
+      .value(entry, "module.$$server$$[0].apps[0]")
       .hasPropertyCountOf(2);
 
-    test("the route0 entry should be passed an object with a type of")
-      .value(entry, "module.$$server$$[0].routes[0].route0[1][0].type")
-      .equals("route");
+    test("The app, app shoud be")
+      .value(entry, "module.$$server$$[0].apps[0].app")
+      .stringify()
+      .equals("{\"label\":\"app\",\"routes\":{\"/order\":[\"appRoute1\",\"myroute\"],\"/\":[\"appRoute2\",\"route0\",\"myroute\"]}}");
 
-    test("the route0 entry should be passed an object with a name of")
-      .value(entry, "module.$$server$$[0].routes[0].route0[1][0].name")
-      .equals("My.Name");
+    test("The auth app should be")
+      .value(entry, "module.$$server$$[0].apps[0].auth")
+      .stringify()
+      .equals("{\"label\":\"auth\",\"routes\":{\"/\":[\"appRoute0\",\"myroute\"]}}");
 
-    test("the route1 entry should be passed an object with a name of")
-      .value(entry, "module.$$server$$[0].routes[0].route1[1][0].name")
-      .equals("My.file1");
 
-    test("the app0 entry should be passed an object with a type of")
-      .value(entry, "module.$$server$$[0].apps[0].app0[1][0].type")
-      .equals("app");
+    test("$$server$$ routes should have 6 properties")
+      .value(entry, "module.$$server$$[0].routes[0]")
+      .hasPropertyCountOf(6);
 
-    test("the files array should have 5 members")
-      .value(files)
-      .hasMemberCountOf(5);
+    test("The route, appRoute0 should be")
+      .value(entry, "module.$$server$$[0].routes[0].appRoute0")
+      .stringify()
+      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"app\",\"label\":\"appRoute0\",\"name\":\"My.file3\",\"method\":\"all\"}}]");
 
-    test("the 5th file should have data equal to")
-      .value(files, "[4].data")
-      .equals("function server() { }");
+    test("The route, myroute should be")
+      .value(entry, "module.$$server$$[0].routes[0].myroute")
+      .stringify()
+      .equals("[{\"factory\":[\"My.Name\",[]],\"meta\":{\"name\":\"My.Name\",\"label\":\"myroute\",\"type\":\"route\",\"method\":\"all\",\"path\":\"/\"}}]");
+
+    test("The route, route0 should be")
+      .value(entry, "module.$$server$$[0].routes[0].route0")
+      .stringify()
+      .equals("[{\"factory\":[\"My.file1\",[]],\"meta\":{\"type\":\"route\",\"name\":\"My.file1\",\"method\":\"all\",\"path\":\"/\",\"label\":\"route0\"}}]");
 
   });
 }
