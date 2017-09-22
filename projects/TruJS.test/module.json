@@ -79,6 +79,8 @@
     "toString": ["TruJS.test.conversions._ToString", []]
     , "stringify": ["TruJS.test.conversions._Stringify", []]
     , "getKeys": ["TruJS.test.conversions._GetKeys", []]
+    , "getCallbackArgs": ["TruJS.test.conversions._GetCallbackArgs", []]
+    , "getCallbackArg": ["TruJS.test.conversions._GetCallbackArg", []]
   }]
   , "testRunner": ["TruJS.test._Runner", []]
   , "testReporter": ["TruJS.test._Reporter", []]
