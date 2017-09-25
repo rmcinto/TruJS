@@ -49,6 +49,10 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
   * @function
   */
   function getRoute(entry, fileObj) {
+    //remove the ending .route from the name
+    fileObj.name = fileObj.name.replace(".route", "");
+    fileObj.file = fileObj.name + fileObj.ext;
+
     var route = annotation.lookup(cnsts.annotaionName, fileObj.data)
     , naming = namer(entry.root, fileObj);
 
@@ -70,9 +74,6 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
         route.index = route.index || cnsts.defaults.index;
       }
     }
-    //remove the ending .route from the name
-    fileObj.name = fileObj.name.replace(".route", "");
-    fileObj.file = fileObj.name + fileObj.ext;
 
     return route;
   }
