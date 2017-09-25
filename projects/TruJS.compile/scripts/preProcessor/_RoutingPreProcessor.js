@@ -199,18 +199,23 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       reject(ex);
     }
   }
-
   /**
   * Adds the server fileObj to the files array
   * @function
   */
-  function addServerFile(resolve, reject, files) {
+  function addServerFile(resolve, reject, entry, files) {
     try {
+      //create the file
       var data = type_route_server.toString()
-      , serverFileObj = fileObj("server.js", data)
+      , name = (entry.name || "TruJS") + ".routing._Server"
+      , path = name.replace(/[.]/g, "/") + ".js"
+      , serverFileObj = fileObj(path, data)
       ;
 
       files.push(serverFileObj);
+
+      //add the module entry
+      entry.module["serve"] = [name, []];
 
       resolve();
     }
@@ -253,7 +258,7 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     //add the server static file
     proc = proc.then(function () {
       return new promise(function (resolve, reject) {
-        addServerFile(resolve, reject, files);
+        addServerFile(resolve, reject, entry, files);
       });
     });
 
@@ -261,6 +266,5 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     return proc.then(function () {
       return preProcessor_module(entry, files);
     });
-
   };
 }
