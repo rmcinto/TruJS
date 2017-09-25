@@ -235,6 +235,7 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
   function addRouteErrors(resolve, reject, entry) {
       try {
           entry.module["routingErrors"] = type_route_routingErrors;
+          resolve();
       }
       catch(ex) {
           reject(ex);
@@ -276,6 +277,13 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     proc = proc.then(function () {
       return new promise(function (resolve, reject) {
         addServerFile(resolve, reject, entry, files);
+      });
+    });
+
+    //add the routingErrors
+    proc = proc.then(function () {
+      return new promise(function (resolve, reject) {
+        addRouteErrors(resolve, reject, entry);
       });
     });
 
