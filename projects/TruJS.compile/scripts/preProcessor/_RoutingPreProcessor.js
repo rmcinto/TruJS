@@ -10,15 +10,18 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     "annotaionName": "route"
     , "defaults": {
       "index": 999
-      , "type": "route"
+      , "type": "router"
       , "appName": "app"
       , "method": "all"
-      , "path": "/"
+      , "path": "*"
+      , "appPath": "-"
+      , "appMethod": "use"
     }
     , "dependencies": {
-      "nodeExpress": [":require(\"express\")"]
-      , "nodeHttp": [":require(\"http\")"]
-      , "nodeHttps": [":require(\"https\")"]
+      "nodeExpress": [":require('express')"]
+      , "nodeHttp": [":require('http')"]
+      , "nodeHttps": [":require('https')"]
+      , "routingErrors": type_route_routingErrors
     }
   };
 
@@ -66,12 +69,19 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       route.name = route.name || naming.name;
       //set the default type
       route.type = route.type || cnsts.defaults.type;
-      route.method = route.method || cnsts.defaults.method;
-      route.path = route.path || cnsts.defaults.path;
+
       //type specific defaults
+      if (route.type === "router") {
+          route.method = route.method || cnsts.defaults.method;
+          route.path = route.path || cnsts.defaults.path;
+      }
       if (route.type === "app") {
+        route.method = route.method || cnsts.defaults.appMethod;
         route.label = route.label || cnsts.defaults.appName;
         route.index = route.index || cnsts.defaults.index;
+        if (!!route.routers) {
+            route.path = route.path || cnsts.defaults.appPath;
+        }
       }
     }
 
@@ -121,67 +131,68 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       //get the $$server$$ object for easy adding
       var server = entry.module["$$server$$"][0]
       , apps = server["apps"] = (server["apps"] || [{}])
-      , rtes = server["routes"] = (server["routes"] || [{}])
-      , curApp
-      , appIndx = 0
+      , rtes = server["routers"] = (server["routers"] || [{}])
+      , mdlwr = server["middleware"] = (server["middleware"] || [{}])
+      , appRouterIndx = 0
+      , appMiddlewareIndx = 0
       , routeIndx = 0
+      , mdlIndx = 0;
       ;
 
       //loop through the routes and update the server object
       routes.forEach(function forEachRoute(route) {
-        var routeList;
+        var entry, app;
 
         //special processing for routes of type app
         if (route.type === "app") {
-          //see if we need to add the app to the apps entry
-          if(!apps[0].hasOwnProperty(route.label)) {
-            apps[0][route.label] = { "label": route.label, "routes": {} };
+          app = processAppEntry(apps, route);
+          //add the route as middleware to the app
+          if (route.type === "router") {
+              //modify the label for the routers collection
+              route.label = "appRouter" + appRouterIndx++;
+              app.routers[route.path].splice(0, 0, route.label);
           }
-          //a reference to the app object
-          curApp = apps[0][route.label];
-          //a reference to the array of routes
-          routeList = curApp.routes[route.path];
-          //add the path entry to the routes object if missing
-          if(!routeList) {
-            routeList = curApp.routes[route.path] = [];
+          else {
+              //modify the label for the middleware array
+              route.label = "appMiddleware" + appMiddlewareIndx++;
+              app.middleware.splice(0, 0, route.label);
           }
-          //add any routes to the route collection for this path
-          if(!!route.routes) {
-            //ensure the routes property is an array
-            !isArray(route.routes) && (route.routes = route.routes.split(","));
-            //loop through each route, only add a route if it hasn't been yet
-            route.routes.forEach(function forEachRoute(route) {
-              if (routeList.indexOf(route) === -1) {
-                routeList.push(route);
-              }
-            });
-          }
-          //modify the label for the routes collection
-          route.label = "appRoute" + appIndx;
-          appIndx++;
-          //insert the new label into the routes array, this is why we sorted in reverse
-          routeList.splice(0, 0, route.label);
-          //clear out the route path since the route will be added to the app with the path, we don't want the router to have a path also
+          //delete the path, it's either a placeholder "-" or added as a router path
           delete route.path;
         }
+        else if (route.type === "router") {
+            //ensure we have a label
+            if (!route.label) {
+              route.label = "router" + routeIndx++;
+            }
+        }
+        else if (route.type === "middleware") {
+            //ensure we have a label
+            if (!route.label) {
+              route.label = "middleware" + mdlIndx++;
+            }
+        }
 
-        //ensure we have a label
-        if (!route.label) {
-          route.label = "route" + routeIndx;
-          routeIndx++;
+        //create the module entry
+        entry = [{
+          "factory": [route.name, []]
+          , "meta": route
+        }];
+
+        if (route.type === "router") {
+            rtes[0][route.label] = entry
+        }
+        else if (route.type === "middleware") {
+            mdlwr[0][route.label] = entry;
         }
 
         //clean up the route object
         delete route.$index;
         delete route.$line;
         delete route.index;
-        delete route.routes;
-
-        //add the route entry
-        rtes[0][route.label] = [{
-          "factory": [route.name, []]
-          , "meta": route
-        }];
+        delete route.routers;
+        delete route.middleware;
+        delete route.name;
 
       });
 
@@ -192,12 +203,66 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     }
   }
   /**
+  * Creates an app on the apps collection if not already, adds routes and
+  * middleware entries to the app, updates the route to either router or
+  * middleware
+  * @function
+  */
+  function processAppEntry(apps, route) {
+      //see if we need to add the app to the apps entry
+      if(!apps[0].hasOwnProperty(route.label)) {
+        apps[0][route.label] = { "label": route.label, "routers": {}, "middleware": [] };
+      }
+      //a reference to the app object
+      var curApp = apps[0][route.label]
+      //get the path or no-path character
+      , path = route.path || "-"
+      //a reference to the collection of routes
+      , routerList = curApp.routers[path]
+      ;
+
+      //add the path entry to the routes object if missing
+      if(!routerList) {
+        routerList = curApp.routers[path] = [];
+      }
+
+      //add any routes to the route collection for this path
+      if(!!route.routers) {
+        //ensure the routes property is an array
+        !isArray(route.routers) && (route.routers = route.routers.split(","));
+        //loop through each route, only add a route if it hasn't been yet
+        route.routers.forEach(function forEachRoute(route) {
+          if (routerList.indexOf(route) === -1) {
+            routerList.push(route);
+          }
+        });
+      }
+
+      //add any middleware
+      if(!!route.middleware) {
+          //concat the app middleware list and the route middleware
+          curApp.middleware = curApp.middleware.concat(route.middleware);
+      }
+
+      //change the type to middleware so we can add this in the middleware step
+      if (!route.path || route.path === "-") {
+          route.type = "middleware";
+      }
+      else {
+          route.type = "router";
+      }
+
+      return curApp;
+  }
+  /**
   * Add the required dependencies for the routing
   * @function
   */
   function addDependencies(resolve, reject, entry) {
     try {
-      applyIf(cnsts.dependencies, entry.module);
+      //add the routing entry
+      entry.module["$$routing$$"] = entry.module["$$routing$$"] || [{}];
+      applyIf(cnsts.dependencies, entry.module["$$routing$$"][0]);
       resolve();
     }
     catch(ex) {
@@ -220,26 +285,13 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       files.push(serverFileObj);
 
       //add the module entry
-      entry.module["serve"] = [name, []];
+      entry.module["$$serve$$"] = [name, []];
 
       resolve();
     }
     catch(ex) {
       reject(ex);
     }
-  }
-  /**
-  * Adds a routeErrors object to the module for _Server errors
-  * @function
-  */
-  function addRouteErrors(resolve, reject, entry) {
-      try {
-          entry.module["routingErrors"] = type_route_routingErrors;
-          resolve();
-      }
-      catch(ex) {
-          reject(ex);
-      }
   }
 
   /**
@@ -277,13 +329,6 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     proc = proc.then(function () {
       return new promise(function (resolve, reject) {
         addServerFile(resolve, reject, entry, files);
-      });
-    });
-
-    //add the routingErrors
-    proc = proc.then(function () {
-      return new promise(function (resolve, reject) {
-        addRouteErrors(resolve, reject, entry);
       });
     });
 

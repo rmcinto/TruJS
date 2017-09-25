@@ -20,39 +20,53 @@ function routeServerHelper(module, callback) {
   ];
   server = {
     "apps": {
-      "app": { "label": "app", "routes": { "/": ["route0"] } }
-      , "auth": { "label": "auth", "routes": { "/": ["appRoute0", "route1"] } }
-      , "app2": { "label": "app2", "routes": { "/app2": ["appRoute1", "route0"], "/": ["route1"] } }
+      "app": { "label": "app", "routers": { "/": ["router0"] }, "middleware": ["appMiddleware0"] }
+      , "auth": { "label": "auth", "routers": { "/": ["appRouter0", "router1"] }, "middleware": ["middleware0"] }
+      , "app2": { "label": "app2", "routers": { "/app2": ["appRouter1", "router0"], "/": ["router1"] }, "middleware": [] }
     }
-    , "routes": {
-      "appRoute0": {
+    , "routers": {
+      "appRouter0": {
         "factory": "appRoute0factory"
         , "meta": {
           "method": "all"
           , "type": "app"
         }
       }
-      , "appRoute1": {
+      , "appRouter1": {
         "factory": "appRoute1factory"
         , "meta": {
           "method": "get"
           , "type": "app"
         }
       }
-      , "route0": {
+      , "router0": {
         "factory": "route0factory"
         , "meta": {
           "path": "/order"
           , "method": "get"
         }
       }
-      , "route1": {
+      , "router1": {
         "factory": "route1factory"
         , "meta": {
           "path": "/\\/account/i"
           , "method": "all"
         }
       }
+    }
+    , "middleware": {
+        "appMiddleware0": {
+            "factory": "appMiddleware0Factory"
+            , "meta": {
+                "afterRouters": false
+            }
+        }
+        , "middleware0": {
+            "factory": "middleware0Factory"
+            , "meta": {
+                "afterRouters": true
+            }
+        }
     }
   };
   nodeExpress = callback(function () {
@@ -157,9 +171,9 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
       .value(routeServerHelper, "apps[0].use")
       .hasBeenCalled(1);
 
-    test("The 2nd app's use method should be 2 times")
+    test("The 2nd app's use method should be 3 times")
       .value(routeServerHelper, "apps[1].use")
-      .hasBeenCalled(2);
+      .hasBeenCalled(3);
 
     test("The 3rd app's use method should be 3 times")
       .value(routeServerHelper, "apps[2].use")
@@ -183,7 +197,7 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
 }
 
 /**[@test({ "title": "TruJS.compile.type.route._Server: test server configuration"})]*/
-function testrouteServer1(arrange, act, assert, routeServerHelper) {
+function testrouteServer2(arrange, act, assert, routeServerHelper) {
   var config, res;
 
   arrange(function () {
@@ -265,12 +279,12 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
     test("res.app should be")
       .value(res, "app")
       .stringify()
-      .equals("{\"label\":\"app\",\"routes\":{\"/\":[\"route0\"]},\"app\":{},\"server\":{}}");
+      .equals("{\"label\":\"app\",\"routers\":{\"/\":[\"router0\"]},\"middleware\":[\"appMiddleware0\"],\"app\":{},\"server\":{}}");
 
     test("res.auth should be")
       .value(res, "auth")
       .stringify()
-      .equals("{\"label\":\"auth\",\"routes\":{\"/\":[\"appRoute0\",\"route1\"]},\"app\":{},\"server\":{}}");
+      .equals("{\"label\":\"auth\",\"routers\":{\"/\":[\"appRouter0\",\"router1\"]},\"middleware\":[\"middleware0\"],\"app\":{},\"server\":{}}");
 
     test("res.auth.app should be")
       .value(res, "auth.app")
@@ -279,7 +293,7 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
     test("res.app2 should be")
       .value(res, "app2")
       .stringify()
-      .equals("{\"label\":\"app2\",\"routes\":{\"/app2\":[\"appRoute1\",\"route0\"],\"/\":[\"route1\"]},\"app\":{},\"server\":{}}");
+      .equals("{\"label\":\"app2\",\"routers\":{\"/app2\":[\"appRouter1\",\"router0\"],\"/\":[\"router1\"]},\"middleware\":[],\"app\":{},\"server\":{}}");
 
     test("res.app2.server should be")
       .value(res, "app2.server")
