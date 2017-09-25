@@ -167,9 +167,9 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
       .value(routeServerHelper, "routers[3].all")
       .hasBeenCalled(1);
 
-    test("The 1st app's use method should be called once")
+    test("The 1st app's use method should be called twice")
       .value(routeServerHelper, "apps[0].use")
-      .hasBeenCalled(1);
+      .hasBeenCalled(2);
 
     test("The 2nd app's use method should be 3 times")
       .value(routeServerHelper, "apps[1].use")

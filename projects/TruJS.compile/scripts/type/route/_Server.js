@@ -27,7 +27,7 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
       ;
 
       //add before middleware to each app
-      addMiddleware(apps, middleware);
+      addMiddleware(apps, middleware, false);
 
       //add the routers to each app
       addRouters(apps, routers);
@@ -150,7 +150,7 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
             }
 
             //see if this is a before or after
-            if (mid.afterRouters === afterRouters) {
+            if (!!mid.afterRouters === afterRouters) {
                 app.app.use(mid.worker);
             }
         });
@@ -179,11 +179,14 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
           if (!router) {
             throw new Error(routingErrors.missingRouter.replace("{router}", routeKey));
           }
-          //parse the path
-          path = getPath(path);
-          //add the router to the app
-          app.app.use(path, router);
-
+          //if the path is the placeholder then add the router without a path
+          if (path === "-") {
+              app.app.use(router);
+          }
+          else {
+              //parse the path and add the router to the app
+              app.app.use(getPath(path), router);
+          }
         });
 
       });
