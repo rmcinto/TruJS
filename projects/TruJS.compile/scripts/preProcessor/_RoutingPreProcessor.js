@@ -5,7 +5,7 @@
 * module preProcessor.
 * @factory
 */
-function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, annotation, namer, fileObj) {
+function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, annotation, namer, fileObj, type_route_routingErrors) {
   var cnsts = {
     "annotaionName": "route"
     , "defaults": {
@@ -227,6 +227,18 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     catch(ex) {
       reject(ex);
     }
+  }
+  /**
+  * Adds a routeErrors object to the module for _Server errors
+  * @function
+  */
+  function addRouteErrors(resolve, reject, entry) {
+      try {
+          entry.module["routingErrors"] = type_route_routingErrors;
+      }
+      catch(ex) {
+          reject(ex);
+      }
   }
 
   /**

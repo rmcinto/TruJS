@@ -66,9 +66,9 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       .not()
       .isError();
 
-    test("entry.module should have 4 properties")
+    test("entry.module should have 5 properties")
       .value(entry, "module")
-      .hasPropertyCountOf(4);
+      .hasPropertyCountOf(5);
 
     test("$$server$$ should have 2 properties")
       .value(entry, "module.$$server$$[0]")

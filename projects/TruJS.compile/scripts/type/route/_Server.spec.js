@@ -1,6 +1,6 @@
 /**[@test({ "label": "routeServerHelper", "type": "factory" })]*/
 function routeServerHelper(module, callback) {
-  var routeServer, apps, routers, server, serverCnt = 0, servers, nodeExpress, nodeHttp, nodeHttps;
+  var routeServer, apps, routers, server, serverCnt = 0, servers, nodeExpress, nodeHttp, nodeHttps, routingErrors;
 
   apps = [ //mock responses for nodeExpress
     { "use": callback() }
@@ -71,7 +71,8 @@ function routeServerHelper(module, callback) {
       return servers[serverCnt++];
     })
   };
-  routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps]]);
+  routingErrors = module([".type_route_routingErrors"]);
+  routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps, routingErrors]]);
 
   return {
     "routeServer": routeServer

@@ -4,7 +4,7 @@
 * passed to the worker function.
 * @factory
 */
-function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) {
+function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, routingErrors) {
   var REGEX_PATT = /^:\/(.*)\/([gim]{0,3})$/;
 
   /**
@@ -113,7 +113,7 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
           //lookup the router
           var router = routers[routeKey];
           if (!router) {
-            throw new Error(errors.missingRouter.replace("{router}", routeKey));
+            throw new Error(routingErrors.missingRouter.replace("{router}", routeKey));
           }
           //parse the path
           path = getPath(path);
@@ -168,7 +168,7 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
     //the port property on the config object
     if (!appConfig.port && !appConfig.socket) {
       if (!config.port) {
-        throw new Error(errors.missingPort.replace("{app}", name));
+        throw new Error(routingErrors.missingPort.replace("{app}", name));
       }
       appConfig.port = config.port;
       //increment the port for the next app
