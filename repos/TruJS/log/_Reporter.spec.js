@@ -83,7 +83,7 @@ function testReporter1(arrange, act, assert, callback, module) {
 
   act(function () {
     reporter.addHandler(handler);
-    reporter.setLevel("info,extended,metric");
+    reporter.setLevels("info,extended,metric");
     reporter.info("info"); //should fire
     reporter.extended("extended"); //should fire
     reporter.metric("metric"); //should fire
@@ -122,7 +122,7 @@ function testReporter1(arrange, act, assert, callback, module) {
 
   act(function () {
     reporter.addHandler(handler);
-    reporter.setLevel("all");
+    reporter.setLevels("all");
     reporter.info("info"); //should fire
     reporter.extended("extended"); //should fire
     reporter.metric("metric"); //should fire
