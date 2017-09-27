@@ -18,24 +18,11 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       , "appMethod": "use"
     }
     , "dependencies": {
-<<<<<<< Updated upstream
-      "nodeExpress": [":require('express')"]
-      , "nodeHttp": [":require('http')"]
-      , "nodeHttps": [":require('https')"]
-      , "routingErrors": type_route_routingErrors
-=======
-<<<<<<< Updated upstream
-      "nodeExpress": [":require(\"express\")"]
-      , "nodeHttp": [":require(\"http\")"]
-      , "nodeHttps": [":require(\"https\")"]
-=======
       "nodeExpress": [":require('express')"]
       , "nodeHttp": [":require('http')"]
       , "nodeHttps": [":require('https')"]
       , "routeReporter": ["TruJS.log._Reporter", []]
       , "routingErrors": type_route_routingErrors
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     }
   };
 
