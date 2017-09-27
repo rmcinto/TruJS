@@ -4,13 +4,27 @@
 * passed to the worker function.
 * @factory
 */
+<<<<<<< Updated upstream
 function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeHttp, $$routing$$_nodeHttps, $$routing$$_routingErrors) {
+=======
+<<<<<<< Updated upstream
+function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) {
+  var REGEX_PATT = /^:\/(.*)\/([gim]{0,3})$/;
+=======
+function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeHttp, $$routing$$_nodeHttps, $$routing$$_routingErrors, $$routing$$_routeReporter) {
+>>>>>>> Stashed changes
   var REGEX_PATT = /^:\/(.*)\/([gim]{0,3})$/
   , nodeExpress = $$routing$$_nodeExpress
   , nodeHttp = $$routing$$_nodeHttp
   , nodeHttps = $$routing$$_nodeHttps
   , routingErrors = $$routing$$_routingErrors
+<<<<<<< Updated upstream
   ;
+=======
+  , routeReporter = $$routing$$_routeReporter
+  ;
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
   /**
   * Uses the $$server$$ to create first the apps and then the routes

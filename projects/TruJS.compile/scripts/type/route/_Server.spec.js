@@ -85,8 +85,20 @@ function routeServerHelper(module, callback) {
       return servers[serverCnt++];
     })
   };
+<<<<<<< Updated upstream
   routingErrors = module([".type_route_routingErrors"]);
   routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps, routingErrors]]);
+=======
+<<<<<<< Updated upstream
+  routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps]]);
+=======
+  routeReporter = {
+      
+  };
+  routingErrors = module([".type_route_routingErrors"]);
+  routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps, routingErrors, routeReporter]]);
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
   return {
     "routeServer": routeServer

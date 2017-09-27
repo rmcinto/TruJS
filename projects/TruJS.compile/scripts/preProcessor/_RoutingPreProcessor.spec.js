@@ -76,11 +76,23 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
 
     test("$$server$$ should have 3 properties")
       .value(entry, "module.$$server$$[0]")
+<<<<<<< Updated upstream
       .hasPropertyCountOf(3);
 
     test("$$routing$$ should have 4 properties")
       .value(entry, "module.$$routing$$[0]")
       .hasPropertyCountOf(4);
+=======
+<<<<<<< Updated upstream
+      .hasPropertyCountOf(2);
+=======
+      .hasPropertyCountOf(3);
+
+    test("$$routing$$ should have 5 properties")
+      .value(entry, "module.$$routing$$[0]")
+      .hasPropertyCountOf(5);
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 
     test("$$server$$.apps should have 2 properties")
