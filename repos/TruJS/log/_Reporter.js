@@ -16,61 +16,11 @@ function _Reporter(isInteger) {
   */
   , handlers = []
   /**
-  * The report level enum
-  * @property
-  */
-  , LEVEL_ENUM = [
-    "all"
-    , "error"
-    , "stack"
-    , "info"
-    , "warning"
-    , "metric"
-    , "extended"
-    , "stack"
-    , "other"
-  ]
-  /**
   * The levels that will fire the handlers
   * @property
   */
-  , levels = [1,2,3]
+  , levels = ["info","error","stack"]
   ;
-
-  /**
-  * Loops through the level value and converts any named levels to the enum index
-  * @function
-  */
-  function convertLevels(value) {
-    var levels = [0];
-    if (!isArray(value)) {
-      if (!isInteger(value)) {
-        value = value.split(",");
-      }
-      else {
-        value = [value];
-      }
-    }
-    value.forEach(function (level) {
-      levels.push(convertLevel(level));
-    });
-    return levels;
-  }
-  /**
-  * Converts a string level to the index in the enum
-  * @function
-  */
-  function convertLevel(level) {
-    //convert string level to index
-    if (!isInteger(level)) {
-      level = LEVEL_ENUM.indexOf(level);
-    }
-    //deal with missing/invalid levels
-    if (level >= LEVEL_ENUM.length || level < 0) {
-      level = LEVEL_ENUM.length - 1; //other
-    }
-    return level;
-  }
 
   /**
   * @worker
@@ -82,17 +32,20 @@ function _Reporter(isInteger) {
         handlers.push(handler);
       }
     }
-    , "setLevel": {
+    , "setLevels": {
       "enumerable": true
       , "value": function setLevel(value) {
-        levels = convertLevels(value);
+        if (!isArray(value)) {
+            value = value.split(",");
+        }
+        levels = value;
       }
     }
     , "report": {
       "enumerable": true
       , "value": function report(level, msg) {
         //test to see if we are reporting this level
-        if (levels.indexOf(convertLevel(level)) === -1 && levels.indexOf(0) === -1) {
+        if (levels.indexOf(level) === -1 && levels.indexOf("all") === -1) {
           return;
         }
         //loop through each handler and execute each one
