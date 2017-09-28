@@ -151,8 +151,12 @@ function _Annotation(regExGetMatches, regExForEachMatch) {
       return ans.map(function ansMap(an, indx) {
         var index = an.$index //the index of the annotation
         , next = ans[indx + 1] //thenext item in the annotation array
-        , nextIndex = !!next && next.$index || text.length //next an or end
-        , data = text.substring(index, nextIndex - 1);
+        , nextIndex = !!next && next.$index || text.length + 1 //next an or end
+        , data = text.substring(index, nextIndex - 1)
+        ;
+
+        //trim the leading and trailing lines and white space
+        data = data.replace(/^[\n\r ]*(.*?)[\n\r ]*$/m, "$1");
 
         return data;
       });
