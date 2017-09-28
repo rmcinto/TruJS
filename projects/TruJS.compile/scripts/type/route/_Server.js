@@ -76,11 +76,14 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
       //get the path, converting string RegEx to RegExp
       , path = getPath(meta.path)
       //create the route object
-      , router = nodeExpress.Router();
+      , router = nodeExpress.Router()
+      , methods = meta.method.split(",")
       ;
 
-      //add the route to the router
-      router[meta.method](path || "*", worker);
+      //add the route to the router for each method
+      methods.forEach(function forEachMethod(method) {
+          router[method](path || "*", worker);
+      });
 
       routers[key] = router;
     });

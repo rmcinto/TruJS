@@ -8,10 +8,10 @@ function routeServerHelper(module, callback) {
     , { "use": callback() }
   ];
   routers = [ //mock responses for nodeExpress.Router
-    { "all": callback(), "get": callback(), "use": callback() }
-    , { "all": callback(), "get": callback(), "use": callback() }
-    , { "all": callback(), "get": callback(), "use": callback() }
-    , { "all": callback(), "get": callback(), "use": callback() }
+    { "all": callback(), "get": callback(), "use": callback(), "put": callback() }
+    , { "all": callback(), "get": callback(), "use": callback(), "put": callback() }
+    , { "all": callback(), "get": callback(), "use": callback(), "put": callback() }
+    , { "all": callback(), "get": callback(), "use": callback(), "put": callback() }
   ];
   servers = [ //mock responses for nodeHttp and nodeHttps
     { "listen": callback() }
@@ -35,7 +35,7 @@ function routeServerHelper(module, callback) {
       , "appRouter1": {
         "factory": "appRoute1factory"
         , "meta": {
-          "method": "get"
+          "method": "get,put"
           , "type": "app"
         }
       }
@@ -155,6 +155,10 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
 
     test("The 2nd router's get callback should be called once")
       .value(routeServerHelper, "routers[1].get")
+      .hasBeenCalled(1);
+
+    test("The 2nd router's put callback should be called once")
+      .value(routeServerHelper, "routers[1].put")
       .hasBeenCalled(1);
 
     test("The 3rd router's get callback should be called once")
