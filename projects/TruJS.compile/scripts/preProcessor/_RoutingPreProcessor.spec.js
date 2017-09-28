@@ -10,33 +10,33 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       "root": "Ns"
       , "module": {}
     };
-    files = [{
-      "data": "/**[@route({ \"type\": \"route\" })]*/"
+    files = [{ //route with generated label route0
+      "data": "/**[@route({ \"type\": \"router\" })]*/"
       , "ext": ".js"
       , "name": "file1"
       , "dir": "My"
-    }, {
+    }, { //route with label myroute, setting the name of the factory
       "data": "/**[@route({ \"name\": \"My.Name\", \"label\": \"myroute\" })]*/"
       , "ext": ".js"
       , "name": "file2"
       , "dir": "My"
-    }, {
-      "data": "/**[@route({ \"type\": \"app\", \"index\": 1, \"routes\": \"route0,myroute\", \"path\": \"/\" })]*/"
+    }, { //app with default label "app", generated router appRouter1
+      "data": "/**[@route({ \"type\": \"app\", \"index\": 1, \"routers\": \"route0,myroute\", \"path\": \"/\" })]*/"
       , "ext": ".js"
       , "name": "file3"
       , "dir": "My"
-    }, {
-      "data": "/**[@route({ \"type\": \"app\", \"label\": \"auth\", \"routes\": [\"myroute\"] })]*/"
+    }, { // app with label auth, generated middleware appMiddleware0, routers with path "-"
+      "data": "/**[@route({ \"type\": \"app\", \"label\": \"auth\", \"routers\": [\"myroute\"], \"middleware\":[\"middleware0\"] })]*/"
       , "ext": ".js"
       , "name": "file3"
       , "dir": "My"
-    }, {
-      "data": "/**[@route({ \"type\": \"app\", \"index\": 0, \"label\": \"app\", \"routes\": \"myroute\", \"path\": \"/order\" })]*/"
+    }, { // app with label "app", generated router appRouter0, 2 routes with path "/order"
+      "data": "/**[@route({ \"type\": \"app\", \"index\": 0, \"label\": \"app\", \"routers\": \"myroute\", \"path\": \"/order\" })]*/"
       , "ext": ".js"
       , "name": "file3"
       , "dir": "My"
-    }, {
-      "data": "/**[@route({ \"type\": \"route\" })]*/"
+    }, { // middleware with generated label middleware0
+      "data": "/**[@route({ \"type\": \"middleware\" })]*/"
       , "ext": ".js"
       , "name": "file4"
       , "dir": "My"
@@ -66,48 +66,69 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       .not()
       .isError();
 
-    test("entry.module should have 4 properties")
+    test("entry.module should have 3 properties")
       .value(entry, "module")
-      .hasPropertyCountOf(4);
+      .hasPropertyCountOf(3);
 
-    test("$$server$$ should have 2 properties")
-      .value(entry, "module.$$server$$[0]")
-      .hasPropertyCountOf(2);
+    test("entry.module should have a property $$serve$$")
+      .value(entry, "module")
+      .hasProperty("$$serve$$");
 
+    test("$$routing$$ should have 5 properties")
+      .value(entry, "module.$$routing$$[0]")
+      .hasPropertyCountOf(5);
 
-    test("$$server$$ apps should have 2 properties")
+    test("$$routing$$ should have 5 properties")
+      .value(entry, "module.$$routing$$[0]")
+      .hasPropertyCountOf(5);
+
+    test("$$server$$.apps should have 2 properties")
       .value(entry, "module.$$server$$[0].apps[0]")
       .hasPropertyCountOf(2);
 
-    test("The app, app shoud be")
+    test("The \"app\" application shoud be")
       .value(entry, "module.$$server$$[0].apps[0].app")
       .stringify()
-      .equals("{\"label\":\"app\",\"routes\":{\"/order\":[\"appRoute1\",\"myroute\"],\"/\":[\"appRoute2\",\"route0\",\"myroute\"]}}");
+      .equals("{\"label\":\"app\",\"routers\":{\"/order\":[\"appRouter0\",\"myroute\"],\"/\":[\"appRouter1\",\"route0\",\"myroute\"]},\"middleware\":[]}");
 
-    test("The auth app should be")
+    test("The \"auth\" application should be")
       .value(entry, "module.$$server$$[0].apps[0].auth")
       .stringify()
-      .equals("{\"label\":\"auth\",\"routes\":{\"/\":[\"appRoute0\",\"myroute\"]}}");
+      .equals("{\"label\":\"auth\",\"routers\":{\"-\":[\"myroute\"]},\"middleware\":[\"appMiddleware0\",\"middleware0\"]}");
 
 
-    test("$$server$$ routes should have 6 properties")
-      .value(entry, "module.$$server$$[0].routes[0]")
-      .hasPropertyCountOf(6);
+    test("$$server$$ routers should have 4 properties")
+      .value(entry, "module.$$server$$[0].routers[0]")
+      .hasPropertyCountOf(4);
 
-    test("The route, appRoute0 should be")
-      .value(entry, "module.$$server$$[0].routes[0].appRoute0")
+    test("The router, appRouter0 should be")
+      .value(entry, "module.$$server$$[0].routers[0].appRouter0")
       .stringify()
-      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"app\",\"label\":\"appRoute0\",\"name\":\"My.file3\",\"method\":\"all\"}}]");
+      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"router\",\"label\":\"appRouter0\",\"method\":\"use\"}}]");
 
-    test("The route, myroute should be")
-      .value(entry, "module.$$server$$[0].routes[0].myroute")
+    test("The router, myroute should be")
+      .value(entry, "module.$$server$$[0].routers[0].myroute")
       .stringify()
-      .equals("[{\"factory\":[\"My.Name\",[]],\"meta\":{\"name\":\"My.Name\",\"label\":\"myroute\",\"type\":\"route\",\"method\":\"all\",\"path\":\"/\"}}]");
+      .equals("[{\"factory\":[\"My.Name\",[]],\"meta\":{\"label\":\"myroute\",\"type\":\"router\",\"method\":\"all\",\"path\":\"*\"}}]");
 
-    test("The route, route0 should be")
-      .value(entry, "module.$$server$$[0].routes[0].route0")
+    test("The router, route0 should be")
+      .value(entry, "module.$$server$$[0].routers[0].router0")
       .stringify()
-      .equals("[{\"factory\":[\"My.file1\",[]],\"meta\":{\"type\":\"route\",\"name\":\"My.file1\",\"method\":\"all\",\"path\":\"/\",\"label\":\"route0\"}}]");
+      .equals("[{\"factory\":[\"My.file1\",[]],\"meta\":{\"type\":\"router\",\"method\":\"all\",\"path\":\"*\",\"label\":\"router0\"}}]");
+
+    test("$$server$$ middleware should have 2 properties")
+      .value(entry, "module.$$server$$[0].middleware[0]")
+      .hasPropertyCountOf(2);
+
+    test("The middleware, appMiddleware0 should be")
+      .value(entry, "module.$$server$$[0].middleware[0].appMiddleware0")
+      .stringify()
+      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"middleware\",\"label\":\"appMiddleware0\",\"method\":\"use\"}}]");
+
+    test("The middleware, middleware0 should be")
+      .value(entry, "module.$$server$$[0].middleware[0].middleware0")
+      .stringify()
+      .equals("[{\"factory\":[\"My.file4\",[]],\"meta\":{\"type\":\"middleware\",\"label\":\"middleware0\"}}]");
 
   });
 }

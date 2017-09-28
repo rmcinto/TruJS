@@ -4,8 +4,14 @@
 * passed to the worker function.
 * @factory
 */
-function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) {
-  var REGEX_PATT = /^:\/(.*)\/([gim]{0,3})$/;
+function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeHttp, $$routing$$_nodeHttps, $$routing$$_routingErrors, $$routing$$_routeReporter) {
+  var REGEX_PATT = /^:\/(.*)\/([gim]{0,3})$/
+  , nodeExpress = $$routing$$_nodeExpress
+  , nodeHttp = $$routing$$_nodeHttp
+  , nodeHttps = $$routing$$_nodeHttps
+  , routingErrors = $$routing$$_routingErrors
+  , routeReporter = $$routing$$_routeReporter
+  ;
 
   /**
   * Uses the $$server$$ to create first the apps and then the routes
@@ -16,9 +22,19 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
       //create the express apps
       var apps = createApps()
       //create the express routers
-      , routers = createRouters();
+      , routers = createRouters()
+      //create the middleware functions
+      , middleware = createMiddleware()
+      ;
+
+      //add before middleware to each app
+      addMiddleware(apps, middleware, false);
+
       //add the routers to each app
       addRouters(apps, routers);
+
+      //add middleware to each app
+      addMiddleware(apps, middleware, true);
 
       resolve(apps);
     }
@@ -45,31 +61,57 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
     return apps;
   }
   /**
-  * Loops through the routes entries, creates the route object, adds the route
+  * Loops through the routers entries, creates the route object, adds the route
   * to the apps
   * @function
   */
   function createRouters() {
     var routers = {};
 
-    //loop through the routes (use the factories object as the base)
-    Object.keys($$server$$.routes).forEach(function forEachKey(key) {
+    //loop through the routers
+    Object.keys($$server$$.routers).forEach(function forEachKey(key) {
       //get the factory and meta data
-      var worker = $$server$$.routes[key].factory
-      , meta = $$server$$.routes[key].meta
+      var worker = $$server$$.routers[key].factory
+      , meta = $$server$$.routers[key].meta
       //get the path, converting string RegEx to RegExp
       , path = getPath(meta.path)
       //create the route object
-      , router = nodeExpress.Router();
+      , router = nodeExpress.Router()
+      , methods = meta.method.split(",")
       ;
 
-      //add the route to the router
-      router[meta.method](path || "*", worker);
+      //add the route to the router for each method
+      methods.forEach(function forEachMethod(method) {
+          router[method](path || "*", worker);
+      });
 
       routers[key] = router;
     });
 
     return routers;
+  }
+  /**
+  * Loops through the $$server$$.middleware collection, gets the worker, and
+  * determines if the middleware should be added added after the routers
+  * @function
+  */
+  function createMiddleware() {
+      var middleware = {};
+
+      //loop through the routers
+      Object.keys($$server$$.middleware).forEach(function forEachKey(key) {
+        //get the factory and meta data
+        var worker = $$server$$.middleware[key].factory
+        , meta = $$server$$.middleware[key].meta
+        , afterRouters = !!meta.afterRouters
+        ;
+        middleware[key] = {
+            "worker": worker
+            , "afterRouters": afterRouters
+        };
+      });
+
+      return middleware;
   }
   /**
   * Gets the path from the meta data, converting it to RegExp if needed
@@ -94,6 +136,32 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
     });
   }
   /**
+  * Loops through the apps, using the middleware array adds the corresponding
+  * middleware functions to the app
+  * @function
+  */
+  function addMiddleware(apps, middleware, afterRouters) {
+      Object.keys(apps).forEach(function forEachApp(key) {
+        var app = apps[key];
+
+        //loop through the app middleware
+        app.middleware.forEach(function forEachAppRoute(midKey) {
+            var mid = middleware[midKey];
+
+            //throw an error if the middleware is not found
+            if (!mid) {
+                throw new Error(routingErrors.missingMiddleware.replace("{name}", midKey));
+            }
+
+            //see if this is a before or after
+            if (!!mid.afterRouters === afterRouters) {
+                app.app.use(mid.worker);
+            }
+        });
+
+      });
+  }
+  /**
   * Loops through the apps, using the routes collection adds the corresponding
   * route to the app
   * @function
@@ -104,22 +172,25 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
       var app = apps[key];
 
       //loop through the app routes
-      Object.keys(app.routes).forEach(function forEachAppRoute(path) {
-        var routes = app.routes[path];
+      Object.keys(app.routers).forEach(function forEachAppRouter(path) {
+        var appRouters = app.routers[path];
 
         //loop through the route key array
-        routes.forEach(function forEachRoute(routeKey) {
+        appRouters.forEach(function forEachRouter(routeKey) {
 
           //lookup the router
           var router = routers[routeKey];
           if (!router) {
-            throw new Error(errors.missingRouter.replace("{router}", routeKey));
+            throw new Error(routingErrors.missingRouter.replace("{router}", routeKey));
           }
-          //parse the path
-          path = getPath(path);
-          //add the router to the app
-          app.app.use(path, router);
-
+          //if the path is the placeholder then add the router without a path
+          if (path === "-") {
+              app.app.use(router);
+          }
+          else {
+              //parse the path and add the router to the app
+              app.app.use(getPath(path), router);
+          }
         });
 
       });
@@ -168,7 +239,7 @@ function _Server(promise, $$server$$, nodeExpress, nodeHttp, nodeHttps, errors) 
     //the port property on the config object
     if (!appConfig.port && !appConfig.socket) {
       if (!config.port) {
-        throw new Error(errors.missingPort.replace("{app}", name));
+        throw new Error(routingErrors.missingPort.replace("{app}", name));
       }
       appConfig.port = config.port;
       //increment the port for the next app

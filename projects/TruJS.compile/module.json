@@ -46,6 +46,7 @@
   , "type": [{
     "route": [{
       "server": ["TruJS.compile.type.route._Server", [], false]
+      , "routingErrors": ["TruJS.compile.type.route.RoutingErrors", [], false]
     }]
   }]
   , "collector": [{
