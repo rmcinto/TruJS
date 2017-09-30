@@ -32,6 +32,7 @@
   , "classHelper": ["TruJS.dom._ClassHelper", []]
   , "logReporter": ["TruJS.log._Reporter", []]
   , "log": ["TruJS.log._Log", []]
+  , "htmlEncoder": ["TruJS.encode._HtmlEncoder", []]
   , "mock": ["TruJS.test.mock._Mock", []]
   , "mockGetStack": true
   , "mockCallback": ["TruJS.test.mock._Callback", []]
