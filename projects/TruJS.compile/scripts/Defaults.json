@@ -23,8 +23,9 @@
   "module": {
     "return": "$$container$$"
   },
+  "testFile": "test.json",
+  "testType": "test",
   "test": {
-    "format": "none",
     "strict": false,
     "naming": false,
     "lint": false

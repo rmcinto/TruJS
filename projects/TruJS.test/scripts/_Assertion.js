@@ -145,8 +145,9 @@ function _Assertion($self, assertions, conversions, resolve, isGetValue, arrayFr
             Object.keys(conversions).forEach(function forEachKey(key) {
                 //wrap the conversion so we can return the chain object
                 chain[key] = function () {
+                    var args = [result.value].concat(arrayFromArguments(arguments));
 
-                    result.value = conversions[key].apply(null, [result.value]);
+                    result.value = conversions[key].apply(null, args);
 
                     return this;
                 };
