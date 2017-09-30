@@ -88,7 +88,7 @@
   "description": "The test package for browser",
 
   "format": "browser",
-  "moduleFile": "../TruJS.compile.app.js",
+  "moduleFile": "../TruJS.test/app.js",
   "moduleName": "TruJSTest",
   "testFile": "browser-test.js",
 
