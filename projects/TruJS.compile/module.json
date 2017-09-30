@@ -74,7 +74,7 @@
   , "formatter": [{
     "javascript": ["TruJS.compile.formatter._JavaScriptFormatter", []]
     , "module": ["TruJS.compile.formatter._JavaScriptFormatter", []]
-    , "test": ["TruJS.compile.formatter._JavaScriptFormatter", []]
+    , "test": ["TruJS.compile.formatter._TestFormatter", []]
     , "routing": ["TruJS.compile.formatter._JavaScriptFormatter", []]
   }]
   , "postProcessor": [{
@@ -82,10 +82,12 @@
     , "module": ["TruJS.compile.postProcessor._JavaScriptPostProcessor", []]
     , "sass": ["TruJS.compile.postProcessor._SassPostProcessor", []]
     , "routing": ["TruJS.compile.postProcessor._JavaScriptPostProcessor", []]
+    , "test": ["TruJS.compile.postProcessor._TestPostProcessor", []]
   }]
   , "minifiers": [{
     "javascript": ["TruJS.compile.minifier._JavaScriptMinifier", []]
   }]
+  , "testIndex": ["TruJS.compile.type.test.indexHtml", [], false]
   , "fileSaver": ["TruJS.compile._FilesSaver", []]
   , "saver": ["TruJS.compile._Saver", []]
   , "defaults": ["TruJS.compile.Defaults", [], false]

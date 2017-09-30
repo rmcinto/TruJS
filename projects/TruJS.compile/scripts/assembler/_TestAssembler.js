@@ -3,39 +3,21 @@
 * processing by the JavaScript Assembler
 * @factory
 */
-function _TestAssembler(promise, getLineEnding, errors) {
-  var cnsts = {
-    "default": {
-      "testType": "test"
-    }
-  };
-  
+function _TestAssembler(promise, getLineEnding, errors, defaults, nodePath, fileObj) {
+
   /**
   * Creates one large file with the test objects stitched together
   * @function
   */
-  function stitchTest(resolve, reject, files) {
+  function stitchTest(resolve, reject, entry, files) {
     var lineEnding = getLineEnding(files[0].data)
     , isErr
-    , file = {
-      "file": "test.json"
-      , "name": "test"
-      , "ext": ".json"
-      , "data": []
-    };
+    , path = nodePath.parse(entry.testFile || entry.output || defaults.testFile).base
+    , data = []
+    ;
 
     //add a json object entry for each file
-    files.forEach(forEachFile);
-
-    if (!isErr) {
-      //modify the file.data array to a string
-      file.data = "[" + file.data.join(", ") + "]";
-
-      resolve([file]);
-    }
-
-    //iterator for each file
-    function forEachFile(test) {
+    files.forEach(function forEachFile(test) {
       if (!isErr) {
         //check for title or label
         if (!test.title && !test.label) {
@@ -45,10 +27,10 @@ function _TestAssembler(promise, getLineEnding, errors) {
         }
 
         //ensure there is a type
-        test.type = test.type || cnsts.default.testType;
+        test.type = test.type || defaults.testType;
 
         //add the test object
-        file.data.push(
+        data.push(
           "{" + lineEnding +
            (!!test.title && "\t\"title\": \"" + test.title + "\", "  + lineEnding || "") +
            (!!test.label && "\t\"label\": \"" + test.label + "\", "  + lineEnding || "") +
@@ -57,6 +39,14 @@ function _TestAssembler(promise, getLineEnding, errors) {
            "}"
         );
       }
+    });
+
+    //if there wasn't an error then join the data and resolve this one file
+    if (!isErr) {
+      //modify the file.data array to a string
+      data = "[" + data.join(", ") + "]";
+
+      resolve([fileObj(path, data)]);
     }
   }
 
@@ -65,8 +55,12 @@ function _TestAssembler(promise, getLineEnding, errors) {
   */
   return function TestAssembler(entry, files) {
 
+    if (isEmpty(files)) {
+        return promise.resolve([]);
+    }
+
     return new promise(function (resolve, reject) {
-      stitchTest(resolve, reject, files);
+        stitchTest(resolve, reject, entry, files);
     });
 
   };

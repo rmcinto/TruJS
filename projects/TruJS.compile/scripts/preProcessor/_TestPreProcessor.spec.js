@@ -1,10 +1,10 @@
 /**[@test({ "title": "TruJS.compile.preProcessor._TestPreProcessor: extract tests" })]*/
-function testTestPreProcessor(arrange, act, assert, callback, module) {
+function testTestPreProcessor1(arrange, act, assert, callback, module) {
   var annotation, testPreProcessor, entry, files, test1, test2, res;
 
   arrange(function () {
     test1 = "/**[@test({ })]*/\ntest1";
-    test2 = "/**[@test({ \"type\": \"factory\" })]*/\ntest2";
+    test2 = "/**[@test({ \"type\": \"factory\" })]*/\nfunction test() {\nconsole.log();\n}";
     annotation = {
       "extract": callback(function (name, data) {
         return [test1, test2];
@@ -17,7 +17,7 @@ function testTestPreProcessor(arrange, act, assert, callback, module) {
           return { "type": "factory" }
         }
       })
-      , "clear": callback()
+      , "clear": callback("data")
     };
     testPreProcessor = module(["TruJS.compile.preProcessor._TestPreProcessor", [, annotation]]);
     entry = {};
@@ -41,7 +41,7 @@ function testTestPreProcessor(arrange, act, assert, callback, module) {
       .value(res)
       .not()
       .isError();
-    //console.log(res);
+
     test("res should have 2 members")
       .value(res)
       .hasMemberCountOf(2);
@@ -61,6 +61,51 @@ function testTestPreProcessor(arrange, act, assert, callback, module) {
     test("The annotation.clear callback should be called 2 times")
       .value(annotation, "clear")
       .hasBeenCalled(2);
+
+  });
+}
+
+/**[@test({ "title": "TruJS.compile.preProcessor._TestPreProcessor: functional test" })]*/
+function testTestPreProcessor2(arrange, act, assert, callback, module) {
+  var annotation, testPreProcessor, entry, files, data, res;
+
+  arrange(function () {
+    data = [
+        "/**[@test({ \"label\":\"test1\", \"format\":\"node\" })]*/"
+        , "function test1() { }\n"
+        , "/**[@test({ \"label\":\"test2\" })]*/"
+        , "function test2() { }\n"
+        , "/**[@test({ \"label\":\"test3\", \"format\":\"browser\" })]*/"
+        , "function test3() { }"
+    ].join("\n");
+    testPreProcessor = module(["TruJS.compile.preProcessor._TestPreProcessor", []]);
+    entry = {
+        "format": "node"
+    };
+    files = [{ "data": data, "name": "file" }];
+  });
+
+  act(function (done) {
+    testPreProcessor(entry, files)
+      .then(function (result) {
+        res = result;
+        done();
+      })
+      .catch(function (err) {
+        res = err;
+        done();
+      });
+  });
+
+  assert(function (test) {
+    test("res should not be an error")
+      .value(res)
+      .not()
+      .isError();
+
+    test("res should have 2 members")
+      .value(res)
+      .hasMemberCountOf(2);
 
   });
 }

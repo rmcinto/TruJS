@@ -10,7 +10,8 @@
 */
 function _Annotation(regExGetMatches, regExForEachMatch) {
   var LINE_SPLIT = /\r?\n/g
-  , ANNOTATION = /^\s*[\/][*][*]\s*\[@([^\(]+)(?:\((.*)\))?\]\s*[*][\/](?:\r?\n)?/gm;
+  , ANNOTATION_PATT = /^\s*[\/][*][*]\s*\[@([^\(]+)(?:\((.*)\))?\]\s*[*][\/](?:\r?\n)?/gm
+  , TRIM_PATT = /^[\n\r ]*(.*?)[\n\r ]*$/m;
 
   /**
   * Adds an annotation to the text
@@ -87,7 +88,7 @@ function _Annotation(regExGetMatches, regExForEachMatch) {
   function getAll(text) {
     var annotations = {};
 
-    regExGetMatches(ANNOTATION, text).forEach(function forEachMatch(match) {
+    regExGetMatches(ANNOTATION_PATT, text).forEach(function forEachMatch(match) {
 
       //grp1 should be the name
       var name = match[1]
@@ -125,7 +126,7 @@ function _Annotation(regExGetMatches, regExForEachMatch) {
   * @function
   */
   function remove(name, text) {
-    return text.replace(ANNOTATION, function replaceAnnotation(val, valName) {
+    return text.replace(ANNOTATION_PATT, function replaceAnnotation(val, valName) {
       if (valName === name) {
         return "";
       }
@@ -137,7 +138,7 @@ function _Annotation(regExGetMatches, regExForEachMatch) {
   * @function
   */
   function clear(text) {
-    return !!text && text.replace(ANNOTATION, "") || "";
+    return !!text && text.replace(ANNOTATION_PATT, "") || "";
   }
   /**
   * Extracts the text between annotations of `name`
@@ -151,8 +152,12 @@ function _Annotation(regExGetMatches, regExForEachMatch) {
       return ans.map(function ansMap(an, indx) {
         var index = an.$index //the index of the annotation
         , next = ans[indx + 1] //thenext item in the annotation array
-        , nextIndex = !!next && next.$index || text.length //next an or end
-        , data = text.substring(index, nextIndex - 1);
+        , nextIndex = !!next && next.$index || text.length + 1 //next an or end
+        , data = text.substring(index, nextIndex - 1)
+        ;
+
+        //trim the leading and trailing lines and white space
+        data = data.replace(TRIM_PATT, "$1");
 
         return data;
       });

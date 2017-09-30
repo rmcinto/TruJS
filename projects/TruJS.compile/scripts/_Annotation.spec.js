@@ -214,27 +214,42 @@ function testAnnotation_Clear(arrange, act, assert, module) {
 
 /**[@test({ "title": "TruJS.compile._Annotation: extract" })]*/
 function testAnnotation_Extract(arrange, act, assert, module) {
-  var annotation, text, result, correct;
+  var annotation, data, result, correct;
 
   arrange(function () {
     annotation = module(["TruJS.compile._Annotation", []]);
-    text = "/**[@fake1({\"test\":\"value1\"})]*/line1\nline2\n/**[@fake2({\"test\":\"value1\"})]*/\nline3\n/**[@fake2({\"test\":\"value2\"})]*/";
+    data = [
+        "/**[@test({ \"label\":\"test1\", \"format\":\"node\" })]*/"
+        , "function test1() { }\n"
+        , "/**[@test({ \"label\":\"test2\" })]*/"
+        , "function test2() { }\n"
+        , "/**[@test({ \"label\":\"test3\", \"format\":\"browser\" })]*/"
+        , "function test3() { }"
+    ].join("\n");
     correct = "line1\nline2\nline3\n";
   });
 
   act(function () {
-    result = annotation.extract("fake2", text);
+    result = annotation.extract("test", data);
   });
 
   assert(function (test) {
 
     test("The result should have 2 members")
       .value(result)
-      .hasMemberCountOf(2);
+      .hasMemberCountOf(3);
 
     test("The result2 1st member should be")
       .value(result, "[0]")
-      .equals("/**[@fake2({\"test\":\"value1\"})]*/\nline3");
+      .equals("/**[@test({ \"label\":\"test1\", \"format\":\"node\" })]*/\nfunction test1() { }");
+
+    test("The result2 1st member should be")
+      .value(result, "[1]")
+      .equals("/**[@test({ \"label\":\"test2\" })]*/\nfunction test2() { }");
+
+    test("The result2 1st member should be")
+      .value(result, "[2]")
+      .equals("/**[@test({ \"label\":\"test3\", \"format\":\"browser\" })]*/\nfunction test3() { }");
 
   });
 }

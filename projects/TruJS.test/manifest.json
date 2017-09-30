@@ -17,7 +17,20 @@
 
   "format": "node",
 
-  "output": "./node_modules/{name}/index.js"
+  "output": "./build/{name}/index.js"
+}, {
+  "type": "javascript",
+  "name": "TruJS.test",
+  "version": "1.0.0",
+  "description": "This is the TruJS.test command line untility",
+
+  "files": [
+    "../cli.js"
+  ],
+
+  "format": "none",
+
+  "output": "./build/{name}/cli.js"
 }, {
   "type": "module",
   "name": "TruJS.test",
@@ -42,47 +55,42 @@
   "format": "browser",
   "namespace": "TruJSTest",
 
-  "output": "./browser_modules/{name}/index.js"
+  "output": "./build/{name}/app.js"
 }, {
-    "type": "javascript",
+    "type": "files",
     "name": "TruJS.test",
     "version": "1.0.0",
     "description": "This script executes the test runner for browsers",
 
     "files": [
       "../browser-run.js"
+      , "+../*resources/*"
     ],
 
     "minify": false,
 
     "format": "browser",
 
-    "output": "./browser_modules/{name}/run.js"
-}, {
-  "type": "javascript",
-  "name": "TruJS.test",
-  "version": "1.0.0",
-  "description": "This is the TruJS.test command line untility",
-
-  "files": [
-    "../cli.js"
-  ],
-
-  "format": "none",
-
-  "output": "./node_modules/{name}/cli.js"
+    "output": "./build/{name}/"
 }, {
   "type": "test",
   "name": "TruJS.test",
   "version": "1.0.0",
   "description": "The test package for node",
 
-  "output": "./node_modules/{name}/test.json"
+   "format": "node",
+
+  "output": "./build/{name}.test/node-test.json"
 }, {
   "type": "test",
   "name": "TruJS.test",
   "version": "1.0.0",
   "description": "The test package for browser",
 
-  "output": "./browser_modules/{name}/test.json"
+  "format": "browser",
+  "moduleFile": "../TruJS.compile.app.js",
+  "moduleName": "TruJSTest",
+  "testFile": "browser-test.js",
+
+  "output": "./build/{name}.test"
 }]
