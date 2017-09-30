@@ -5,7 +5,7 @@
 */
 //load the required modules
 var cmdArgs = require('TruJS.cmdArgs')(process.argv)
-, compile = require('TruJS.compile')
+, compile = require('./index.js')
 //resolve the compiler worker from the compile container
 , run = compile('.run')
 , saver = compile('.saver')
