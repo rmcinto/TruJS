@@ -10,7 +10,7 @@
 
     "format": "node",
 
-    "output": "./node_modules/{name}/index.js"
+    "output": "./build/{name}/index.js"
 }, {
   "type": "javascript",
   "name": "TruJS.compile",
@@ -23,12 +23,12 @@
 
   "format": "none",
 
-  "output": "./node_modules/{name}/cli.js"
+  "output": "./build/{name}/cli.js"
 }, {
   "type": "test",
   "name": "TruJS.compile",
   "version": "1.0.0",
   "description": "The test package for node",
 
-  "output": "./node_modules/{name}/test.json"
+  "output": "./build/{name}.test/test.json"
 }]

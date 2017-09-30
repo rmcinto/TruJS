@@ -4,7 +4,7 @@
 *
 * @factory
 */
-function _Minifier(promise, $container, defaults) {
+function _Minifier(promise, $container, defaults, errors) {
 
   /**
   * Minifies the file, rejecting if there is an error
