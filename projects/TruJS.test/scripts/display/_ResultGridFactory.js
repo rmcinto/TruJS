@@ -2,7 +2,7 @@
 * An object factory that creates a ResultGrid object
 * @factory
 */
-function _ResultGridFactory(elementHelper, classHelper) {
+function _ResultGridFactory(elementHelper, classHelper, htmlEncoder) {
 
   /**
   *
@@ -419,7 +419,7 @@ function _ResultGridFactory(elementHelper, classHelper) {
           val = val.substring(0, 37) + '...';
       }
       //return the html encoded value
-      return TruJS.encode.HtmlEncoder.encode(val);
+      return htmlEncoder.encode(val);
   };
   /**
   * Creates an entry for the test iteration
@@ -551,4 +551,4 @@ function _ResultGridFactory(elementHelper, classHelper) {
           }
       });
   }
-});
+}

@@ -19,12 +19,12 @@ var testCount = TruJSTest('.testPackage').count, curTest, perc;
 //setup the report listener
 TruJSTest('.testReporter').setListener(function (type, entry) {
     //if this is a test then store the test
-    if (type === 'test') {
+    if (type === 'end-test') {
         curTest = entry;
         perc = (curTest.index + 1) / testCount;
         perc = perc * 100;
     }
-    else if (type === 'iteration') {
+    else if (type === 'end-iteration') {
         progress.update((curTest.index + 1) + ':' + curTest.title + ' (' + (entry.iteration + 1) + ')', perc);
     }
     else if (type === 'finished') {

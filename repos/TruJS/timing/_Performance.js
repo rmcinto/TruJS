@@ -9,7 +9,7 @@ function _Performance(global) {
   //set the function that will be used
   if (!!global.performance) {
     origin = PerformanceTiming.navigationStart;
-    func = performance.now;
+    func = performance.now.bind(performance);
   }
   else if (!!global.process) {
     origin = calcNow() - (process.uptime() * SEC_MS);
