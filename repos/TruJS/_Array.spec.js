@@ -68,7 +68,7 @@ function testArray3(arrange, act, assert, module) {
     assert(function (test) {
       test('The strAr type should be "string"').value(strArType).equals('string');
       test('The numAr type should be "number"').value(numArType).equals('number');
-      test('The objAr type should be "string"').value(objArType).equals('Object');
+      test('The objAr type should be "string"').value(objArType).equals('object');
     });
 }
 /**[@test({ "title": "TruJS.Array.ofType: create 3 mixed arrays" })]*/

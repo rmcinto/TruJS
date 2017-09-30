@@ -124,13 +124,15 @@ TruJS.emFn = emFn;
 function getType(o) {
     var type = typeof o;
     if (type === 'object') {
-        type = Object.prototype.toString.call(o).replace('[object ', '').replace(']', '');
+        //test for promise
+        if (isPromise(o)) {
+            type = 'promise';
+        }
+        else {
+            type = Object.prototype.toString.call(o).replace('[object ', '').replace(']', '');
+        }
     }
-    //test for promise
-    if (type === 'object' && isPromise(o)) {
-        type = 'Promise';
-    }
-    return type;
+    return type.toLowerCase();
 }
 TruJS.getType = getType;
 

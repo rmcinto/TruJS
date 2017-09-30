@@ -3,7 +3,8 @@
   , "originTimestamp": [":Date.now()"]
   , "promise": [":Promise"]
   , "setTimeout": [":setTimeout"]
-  , "customEvent": [":require(\"customevent\")"]
+  , "createElement": [".document.createElement", [], { "bind": { "scope": [".document"] }, "runFactory": false }]
+  , "createTextNode": [".document.createTextNode", [], { "bind": { "scope": [".document"] }, "runFactory": false }]
   , "array": ["TruJS._Array", []]
   , "arrayOfType": [".array.ofType"]
   , "number": ["TruJS._Number", []]
@@ -34,4 +35,6 @@
   , "objectWatcher": ["TruJS.object._Watcher", []]
   , "antiXss": ["TruJS.security._AntiXss", []]
   , "performance": ["TruJS.timing._Performance",[]]
+  , "simpleExpression": ["TruJS.view._SimpleExpression", []]
+  , "simpleTemplate": ["TruJS.view._SimpleTemplate", []]
 }

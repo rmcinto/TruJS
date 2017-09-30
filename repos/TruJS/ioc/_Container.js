@@ -41,7 +41,8 @@ function (functionInspector, objectLookup, iocEntry) {
     //*******************************************
     // static variables
     var PATH_PATT = /[^.\[\]_]+|\[([0-9]+)\]/g
-    , SPLIT_PATT = /[.]|\[|\]/;
+    , SPLIT_PATT = /[.]|\[|\]/
+    ;
 
     //*******************************************
     // factory function
@@ -56,7 +57,8 @@ function (functionInspector, objectLookup, iocEntry) {
         * An object that the container will use as the name resolution root
         * @property {object} root
         */
-        var root;
+        var root
+        ;
 
         //*******************************************
         //initialize

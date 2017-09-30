@@ -38,7 +38,7 @@ TruJSTest('.testPackage')
     .resolve()
     .run({
         "iterations": vals['iterations'] || undefined
-        , "testNums": !!vals['testNum'] && vals['testNum'].split(',') || undefined
+        , "testNums": !!vals['testNums'] && vals['testNums'].split(',') || undefined
         , "prime": vals['prime'] !== 'false'
     })
     .then(function (results) {
