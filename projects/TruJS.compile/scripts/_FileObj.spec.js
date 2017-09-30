@@ -36,7 +36,7 @@ function testFileObj1(arrange, act, assert, module) {
   });
 }
 
-/**[@test({ "title": "TruJS.compile._FileObj: path object and data" })]*/
+/**[@test({ "title": "TruJS.compile._FileObj: path object w/ file property and data" })]*/
 function testFileObj2(arrange, act, assert, module) {
   var fileObj, path, data, res, nodePath;
 
@@ -44,6 +44,8 @@ function testFileObj2(arrange, act, assert, module) {
     nodePath = module(".nodePath");
     fileObj = module(["TruJS.compile._FileObj", []]);
     path = nodePath.parse("/base/path/file.js");
+    path.file = path.base;
+    delete path.base;
     data = "file data";
   });
 

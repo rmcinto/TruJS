@@ -48,6 +48,8 @@ function testPathResultProcessor1(arrange, act, assert, module) {
     test("There should be 5 files")
       .value(files)
       .hasMemberCountOf(5);
+
+
     test("The files should be unique")
       .value(files)
       .isUnique();

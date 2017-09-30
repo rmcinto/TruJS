@@ -21,8 +21,8 @@ function _FileObj(nodePath) {
 
     if (!path.name) {
       path.name = !!path.base && nodePath.parse(path.base).name
-              || !!path.path && nodePath.parse(path.path).name
-              || path.name;
+              || !!path.file && nodePath.parse(path.file).name
+              || !!path.path && nodePath.parse(path.path).name;
     }
 
     if (!path.dir) {
@@ -31,7 +31,7 @@ function _FileObj(nodePath) {
     }
 
     //convert the path object to a file object
-    path.file = path.base || (path.name + path.ext);
+    path.file = path.file || path.base || (path.name + path.ext);
     path.path = path.path || nodePath.join(path.dir, path.file);
     delete path.base;
     path.data = data;

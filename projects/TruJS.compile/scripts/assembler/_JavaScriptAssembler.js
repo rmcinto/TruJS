@@ -26,7 +26,7 @@
 *
 * @module
 */
-function _JavaScriptAssembler(promise, annotation, nodePath, stringTrim, getLineEnding, regExGetMatches, stringInsert, namer) {
+function _JavaScriptAssembler(promise, annotation, nodePath, stringTrim, getLineEnding, regExGetMatches, stringInsert, namer, fileObj) {
   var COMM_PATT = /^\s?((?:\/[*]{1,2}[\s\S]*?[*]\/\r?\n)|(?:[\/]{2}[^\n]*\n))+/g
   ;
 
@@ -39,7 +39,7 @@ function _JavaScriptAssembler(promise, annotation, nodePath, stringTrim, getLine
     var data = [] //array for the processed file data
     , namespaces = [] //array for required namespaces
     , lineEnding
-    , fileObj = nodePath.parse(entry.name + ".js") //the new file object with fake name
+    , pathObj = nodePath.parse(entry.name + ".js") //the new file object with fake name
     ;
 
     //loop through the file objects, process each, and add the result to the
@@ -53,11 +53,11 @@ function _JavaScriptAssembler(promise, annotation, nodePath, stringTrim, getLine
     //add the namespace entries
     data = addNamespaces(namespaces, data, lineEnding).concat(data);
 
-    //join the data array and update the new file object
-    fileObj.data = [data.join(lineEnding + lineEnding)];
+    //join the data array
+    data = [data.join(lineEnding + lineEnding)];
 
     //resolve with the file object
-    resolve([fileObj]);
+    resolve([fileObj(pathObj.base, data)]);
   }
   /**
   * Runs the namer and determines if the name should be added to the file data
