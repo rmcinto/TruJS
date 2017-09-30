@@ -3,7 +3,9 @@
 * object, loads the test files and runs it
 * @factory
 */
-function _Run(promise, nodePath, nodeFs, nodeRequire, errors, defaults, testPackage) {
+function _Run(promise, nodePath, nodeFs, nodeRequire, errors, defaults, testPackage, nodeCwd) {
+  var PATH_PATT = /[./\\]/
+  ;
 
   /**
   * Gets the file name from the command line args, and load the file
@@ -78,7 +80,8 @@ function _Run(promise, nodePath, nodeFs, nodeRequire, errors, defaults, testPack
 
       //add the module if there is a module arguments
       if (!!cmdArgs.module) {
-        testPackage.setup("module")["value"](nodeRequire(cmdArgs.module));
+        var module = getModulePath(cmdArgs.module);
+        testPackage.setup("module")["value"](nodeRequire(module));
       }
 
       //resolve all the tests, start the runner
@@ -89,6 +92,16 @@ function _Run(promise, nodePath, nodeFs, nodeRequire, errors, defaults, testPack
     catch(ex) {
       reject(ex);
     }
+  }
+  /**
+  *
+  * @function
+  */
+  function getModulePath(module) {
+      if (PATH_PATT.exec(module)) {
+          return nodePath.join(nodeCwd, module);
+      }
+      return module;
   }
 
   /**

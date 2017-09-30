@@ -4,13 +4,9 @@
 */
 
 var cmdArgs = require("TruJS.cmdArgs")(process.argv)
-, trujsTest = require("TruJS.test")
+, trujsTest = require("./index.js")
 , trujsTestRun = trujsTest(".run")
-, reporter = trujsTest(".testReporter")
 ;
-
-//add the report handler
-reporter.setListener(reportHandler);
 
 console.log("** Starting Tests **");
 console.log("");
@@ -18,7 +14,7 @@ console.log("");
 //run the test
 trujsTestRun(cmdArgs)
   .then(function (results) {
-    //console.log(results);
+    results.tests.forEach(printResults);
     console.log("");
     console.log("************************************************************");
     console.log("Finished");
@@ -31,54 +27,63 @@ trujsTestRun(cmdArgs)
     console.log(err);
   });
 
-
 /**
-* Handler for the test reporter
+* Prints the results with the detail set by the a and v options
 * @function
 */
-function reportHandler(type, entry) {
-  if (type === "start-test") {
-    console.log("  #" + (entry.index + 1) + " Start Test \"" + entry.title + "\"");
-  }
-  else if (type === "start-iteration") {
-    if (entry.iteration >= 0) {
-      console.log("    Starting Iteration " + (entry.iteration + 1));
-    }
-  }
-  else if (type === "end-iteration") {
-    if (!!entry.exception) {
-      console.error(entry.exception);
-    }
-    else {
-      console.log("      arrange: " + (entry.arrange) + "ms");
-      console.log("      act: " + (entry.act) + "ms");
-      console.log("      assert: " + (entry.assert) + "ms");
-      if (!!entry.assertions) {
-        console.log("      assertions (" + entry.assertions.length + ")");
-        entry.assertions.forEach(function (assertion, indx) {
-          console.log("        #" + (indx + 1) + " \"" + assertion.title + "\"");
-          console.log("          Passed: " + assertion.pass);
+function printResults(result) {
+    var lvl = cmdArgs.options.filter(function (op) { return op === "v"; }).length
+    , iterations
+    ;
+    if (cmdArgs.options.indexOf("a") !== -1 || !result.success) {
+        console.log("  #" + (result.num) + " Start Test \"" + result.title + "\"");
+        console.log("    Success: " + result.success);
+        console.log("    Runtime: " + result.runtimes.total + "ms");
 
-          if (!assertion.pass) {
-            console.log("          \"" + ((typeof assertion.args[0] === "function") ? "function" : JSON.stringify(assertion.args[0])) + "\" " + assertion.name + " \"" + assertion.args[assertion.args.length - 1] + "\"");
-          }
+        //level 1 Assertions
+        if (lvl > 0)  {
 
-          if (!!assertion.exception) {
-            console.log("");
-            console.log(assertion.exception);
-            console.log("");
-          }
-        });
-      }
+            //Level 2 Iterations
+            if (lvl > 1) {
+                console.log("    Iterations: " + result.count);
+                console.log("    Failed: " + result.failed);
+                iterations = result.iterations;
+            }
+            else {
+                iterations = [result.iterations[0]];
+            }
+
+            console.log("      Assertions: " + result.assertions);
+
+            for (var i = 0, l = iterations.length; i < l; i++) {
+                if (lvl > 1) {
+                    console.log("      Iteration #" + (i + 1));
+                    console.log("        arrange: " + (iterations[i].runtimes.arrange) + "ms");
+                    console.log("        act: " + (iterations[i].runtimes.act) + "ms");
+                    console.log("        assert: " + (iterations[i].runtimes.assert) + "ms");
+                }
+
+                if (!iterations[i].exception) {
+                    var assertions = iterations[i].assertions;
+                    for (var a = 0, al = assertions.length; a < al; a++) {
+                        console.log("          #" + (a + 1) + " \"" + assertions[a].title + "\"");
+                        console.log("          Passed: " + assertions[a].pass);
+                        if (!assertions[a].pass) {
+                          console.log("          \"" + ((typeof assertions[a].args[0] === "function") ? "function" : JSON.stringify(assertions[a].args[0])) + "\" " + assertions[a].name + " \"" + assertions[a].args[assertions[a].args.length - 1] + "\"");
+                        }
+                        if (!!assertions[a].exception) {
+                            console.log("");
+                            console.log(assertions[a].exception);
+                            console.log("");
+                        }
+                    }
+                }
+                else {
+                    console.error(iterations[i].exception);
+                }
+
+                console.log("");
+            }
+        }
     }
-  }
-  else if (type === "end-test") {
-    console.log("  #" + (entry.index + 1) + " Finished Test");
-    console.log("");
-  }
-  else if (type === "finished") {
-    console.log("");
-    console.log("** Processing Results **");
-  }
-
 }
