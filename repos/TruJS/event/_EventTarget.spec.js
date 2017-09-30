@@ -12,10 +12,9 @@ function testEventTarget1(arrange, act, assert, callback, mock, module) {
       cfg = {
           "customEvent": callback(mockEvent)
           , "resolver": callback({ "value": mockMouseConst })
-          , "isMatch": TruJS.Object.isMatch
       };
       //create the event target
-      eventTarget = _EventTarget(cfg.customEvent, cfg.resolver, cfg.isMatch);
+      eventTarget = _EventTarget(cfg.customEvent, cfg.resolver);
       //create each object with the event handler
       obj = Object.create(eventTarget());
       cnt = 0;
@@ -58,10 +57,9 @@ function testEventTarget2(arrange, act, assert, callback, mock, module) {
       cfg = {
           "customEvent": callback(mockEvent, false)
           , "resolver": callback(mockMouseConst, false)
-          , "isMatch": TruJS.Object.isMatch
       };
       //create the event target
-      eventTarget = _EventTarget(cfg.customEvent, cfg.resolver, cfg.isMatch);
+      eventTarget = _EventTarget(cfg.customEvent, cfg.resolver);
       //create each object with the event handler
       obj = Object.create(eventTarget());
       cnt = 0;

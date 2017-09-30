@@ -161,8 +161,8 @@ function testTruJS8(arrange, act, assert, customEvent, trujs) {
     });
 
     assert(function (test) {
-        test('test1 should be').value(res1).equals('CustomEvent');
-        test('test2 should be').value(res2).equals('Array');
+        test('test1 should be').value(res1).equals('customevent');
+        test('test2 should be').value(res2).equals('array');
         test('test3 should be').value(res3).equals('number');
     });
 }

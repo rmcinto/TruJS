@@ -24,8 +24,8 @@ function testStack1(arrange, act, assert, module) {
 
       test('The method value for the second stack entry should be undefined')
         .value(res, '[1].method')
-        .isUndef();
-        
+        .equals('eval');
+
       test('The method value for the third stack entry should be')
         .value(res, '[2].method')
         .equals('outer');
