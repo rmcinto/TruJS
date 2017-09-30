@@ -22,7 +22,7 @@ function _Directory(nodeFs, nodePath, promise) {
     //when the options value is `true` create the object with recurse true
     if (options === true) {
       options = {
-        "recurse": false
+        "recurse": true
       };
     }
     //when the options value is a string create the object with filter:option
