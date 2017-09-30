@@ -4,13 +4,15 @@
 * passed to the worker function.
 * @factory
 */
-function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeHttp, $$routing$$_nodeHttps, $$routing$$_routingErrors, $$routing$$_routeReporter) {
+function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeHttp, $$routing$$_nodeHttps, $$routing$$_routingErrors, $$routing$$_routeReporter, $$routing$$_nodeDirName, $$routing$$_nodePath ) {
   var REGEX_PATT = /^:\/(.*)\/([gim]{0,3})$/
   , nodeExpress = $$routing$$_nodeExpress
   , nodeHttp = $$routing$$_nodeHttp
   , nodeHttps = $$routing$$_nodeHttps
   , routingErrors = $$routing$$_routingErrors
   , routeReporter = $$routing$$_routeReporter
+  , nodeDirName = $$routing$$_nodeDirName
+  , nodePath = $$routing$$_nodePath
   ;
 
   /**
@@ -33,6 +35,9 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
       //add the routers to each app
       addRouters(apps, routers);
 
+      //add any statics
+      addStatics(apps);
+
       //add middleware to each app
       addMiddleware(apps, middleware, true);
 
@@ -54,6 +59,7 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
     Object.keys($$server$$.apps).forEach(function forEachKey(key) {
       //create the express app
       $$server$$.apps[key].app = nodeExpress();
+      routeReporter.extended("Adding app [" + key + "]");
       //add to the application list
       apps[key] = $$server$$.apps[key];
     });
@@ -85,7 +91,10 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
           router[method](path || "*", worker);
       });
 
-      routers[key] = router;
+      routers[key] = {
+          "worker": router
+          , "label": meta.label
+      };
     });
 
     return routers;
@@ -108,6 +117,7 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
         middleware[key] = {
             "worker": worker
             , "afterRouters": afterRouters
+            , "label": meta.label
         };
       });
 
@@ -145,18 +155,34 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
         var app = apps[key];
 
         //loop through the app middleware
-        app.middleware.forEach(function forEachAppRoute(midKey) {
-            var mid = middleware[midKey];
+        Object.keys(app.middleware).forEach(function forEachAppRouter(path) {
+          var appMiddleware = app.middleware[path];
 
-            //throw an error if the middleware is not found
-            if (!mid) {
-                throw new Error(routingErrors.missingMiddleware.replace("{name}", midKey));
-            }
+            //loop through the app middleware
+            appMiddleware.forEach(function forEachAppRoute(midKey) {
+                var mid = middleware[midKey]
+                , methods = !!mid.method && (isArray(mid.method) && mid.method || mid.method.split(",")) || ["use"]
+                ;
 
-            //see if this is a before or after
-            if (!!mid.afterRouters === afterRouters) {
-                app.app.use(mid.worker);
-            }
+                //throw an error if the middleware is not found
+                if (!mid) {
+                    throw new Error(routingErrors.missingMiddleware.replace("{name}", midKey));
+                }
+
+                //see if this is a before or after
+                if (!!mid.afterRouters === afterRouters) {
+                    routeReporter.extended("Adding middleware  ("+ path + ") [" + mid.label + "]");
+                    methods.forEach(function (method) {
+                        if (path === "-") {
+                            app.app[method](mid.worker);
+                        }
+                        else {
+                            app.app[method](path, mid.worker);
+                        }
+                    });
+                }
+            });
+
         });
 
       });
@@ -183,19 +209,52 @@ function _Server(promise, $$server$$, $$routing$$_nodeExpress, $$routing$$_nodeH
           if (!router) {
             throw new Error(routingErrors.missingRouter.replace("{router}", routeKey));
           }
+          routeReporter.extended("Adding router ("+ path + ")[" + router.label + "]");
           //if the path is the placeholder then add the router without a path
           if (path === "-") {
-              app.app.use(router);
+              app.app.use(router.worker);
           }
           else {
               //parse the path and add the router to the app
-              app.app.use(getPath(path), router);
+              app.app.use(getPath(path), router.worker);
           }
         });
 
       });
 
     });
+  }
+  /**
+  * Creates the static middleware and adds them to the application
+  * @function
+  */
+  function addStatics(apps) {
+      //loop through each app looking for a static property
+      Object.keys(apps).forEach(function forEachApp(key) {
+          var app = apps[key];
+
+          if (!!app.statics) {
+              //loop through the app statics paths
+             Object.keys(app.statics).forEach(function forEachAppRouter(path) {
+                 var statics = app.statics[path];
+                 //loop through the statics list
+                 statics.forEach(function forEachStatic(staticMw) {
+                     if (!isObject(staticMw)) {
+                         staticMw = {
+                             "path": staticMw
+                         };
+                     }
+                     routeReporter.extended("Adding static  ("+ path + ") [" + staticMw.path + "]");
+                     if (path === "-") {
+                         app.app.use(nodeExpress.static(nodePath.join(nodeDirName, staticMw.path)));
+                     }
+                     else {
+                         app.app.use(path, nodeExpress.static(nodePath.join(nodeDirName, staticMw.path)));
+                     }
+                 });
+            });
+          }
+      });
   }
   /**
   * Loops through the apps, executing the listen method for each, using the

@@ -23,6 +23,8 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       , "nodeHttps": [":require('https')"]
       , "routeReporter": ["TruJS.log._Reporter", []]
       , "routingErrors": type_route_routingErrors
+      , "nodePath": [":require('path')"]
+      , "nodeDirName": [":__dirname"]
     }
   };
 
@@ -99,7 +101,7 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       , rts = routes.filter(function filterApps(route) { return route.type !== "app"; })
       ;
       //sort the apps
-      apps.sort(reverseSorter);
+      apps.sort(sorter);
       //recombine the apps and routes
       resolve(apps.concat(rts));
     }
@@ -108,15 +110,15 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
     }
   }
   /**
-  * A sorter that uses the index property to sort the array in reverse
+  * A sorter that uses the index property to sort the array
   * @function
   */
-  function reverseSorter(a, b) {
+  function sorter(a, b) {
     if (a.index < b.index) {
-      return 1;
+      return -1;
     }
     if (a.index > b.index) {
-      return -1;
+      return 1;
     }
     return 0;
   }
@@ -134,8 +136,7 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
       , apps = server["apps"] = (server["apps"] || [{}])
       , rtes = server["routers"] = (server["routers"] || [{}])
       , mdlwr = server["middleware"] = (server["middleware"] || [{}])
-      , appRouterIndx = 0
-      , appMiddlewareIndx = 0
+      , appIndx = 0
       , routeIndx = 0
       , mdlIndx = 0;
       ;
@@ -146,20 +147,7 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
 
         //special processing for routes of type app
         if (route.type === "app") {
-          app = processAppEntry(apps, route);
-          //add the route as middleware to the app
-          if (route.type === "router") {
-              //modify the label for the routers collection
-              route.label = "appRouter" + appRouterIndx++;
-              app.routers[route.path].splice(0, 0, route.label);
-          }
-          else {
-              //modify the label for the middleware array
-              route.label = "appMiddleware" + appMiddlewareIndx++;
-              app.middleware.splice(0, 0, route.label);
-          }
-          //delete the path, it's either a placeholder "-" or added as a router path
-          delete route.path;
+          app = processAppEntry(apps, route, appIndx++);
         }
         else if (route.type === "router") {
             //ensure we have a label
@@ -209,22 +197,37 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
   * middleware
   * @function
   */
-  function processAppEntry(apps, route) {
+  function processAppEntry(apps, route, appMiddlewareIndx) {
       //see if we need to add the app to the apps entry
       if(!apps[0].hasOwnProperty(route.label)) {
-        apps[0][route.label] = { "label": route.label, "routers": {}, "middleware": [] };
+        apps[0][route.label] = { "label": route.label, "routers": {}, "middleware": {}, "statics": {} };
       }
+
       //a reference to the app object
       var curApp = apps[0][route.label]
       //get the path or no-path character
       , path = route.path || "-"
       //a reference to the collection of routes
       , routerList = curApp.routers[path]
+      //a reference to the collection of middleware
+      , middlewareList = curApp.middleware[path]
+      //a reference to the collection of static paths
+      , staticList = curApp.statics[path]
       ;
 
-      //add the path entry to the routes object if missing
+      //add the path entry to the routers object if missing
       if(!routerList) {
         routerList = curApp.routers[path] = [];
+      }
+
+      //add the path entry to the middleware object if missing
+      if(!middlewareList) {
+        middlewareList = curApp.middleware[path] = [];
+      }
+
+      //add the path entry to the statis object if missing
+      if(!staticList) {
+        staticList = curApp.statics[path] = [];
       }
 
       //add any routes to the route collection for this path
@@ -239,19 +242,38 @@ function _RoutingPreProcessor(promise, preProcessor_module, type_route_server, a
         });
       }
 
-      //add any middleware
+      //add any routes to the route collection for this path
       if(!!route.middleware) {
-          //concat the app middleware list and the route middleware
-          curApp.middleware = curApp.middleware.concat(route.middleware);
+        //ensure the routes property is an array
+        !isArray(route.middleware) && (route.middleware = route.middleware.split(","));
+        //loop through each route, only add a middleware if it hasn't been yet
+        route.middleware.forEach(function forEachRoute(middleware) {
+          if (middlewareList.indexOf(middleware) === -1) {
+            middlewareList.push(middleware);
+          }
+        });
+      }
+
+      //add any routes to the route collection for this path
+      if(!!route.static) {
+        //ensure the routes property is an array
+        !isArray(route.static) && (route.static = route.static.split(","));
+        //loop through each route, only add a middleware if it hasn't been yet
+        route.static.forEach(function forEachRoute(staticPath) {
+          if (staticList.indexOf(staticPath) === -1) {
+            staticList.push(staticPath);
+          }
+        });
       }
 
       //change the type to middleware so we can add this in the middleware step
-      if (!route.path || route.path === "-") {
-          route.type = "middleware";
-      }
-      else {
-          route.type = "router";
-      }
+      route.type = "middleware";
+      //no need for the path as it will be included when we add the middleware
+      delete route.path;
+      //modify the label for the middleware array
+      route.label = route.label + "EntryPoint" + appMiddlewareIndx;
+      //add this entry point to the middleware list
+      middlewareList.splice(0, 0, route.label);
 
       return curApp;
   }

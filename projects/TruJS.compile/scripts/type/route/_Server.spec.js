@@ -1,6 +1,6 @@
 /**[@test({ "label": "routeServerHelper", "type": "factory" })]*/
 function routeServerHelper(module, callback) {
-  var routeServer, apps, routers, server, serverCnt = 0, servers, nodeExpress, nodeHttp, nodeHttps, routingErrors, routeReporter;
+  var routeServer, apps, routers, server, serverCnt = 0, servers, nodeExpress, nodeHttp, nodeHttps, routingErrors, routeReporter, nodePath;
 
   apps = [ //mock responses for nodeExpress
     { "use": callback() }
@@ -20,9 +20,9 @@ function routeServerHelper(module, callback) {
   ];
   server = {
     "apps": {
-      "app": { "label": "app", "routers": { "/": ["router0"] }, "middleware": ["appMiddleware0"] }
-      , "auth": { "label": "auth", "routers": { "/": ["appRouter0", "router1"] }, "middleware": ["middleware0"] }
-      , "app2": { "label": "app2", "routers": { "/app2": ["appRouter1", "router0"], "/": ["router1"] }, "middleware": [] }
+      "app": { "label": "app", "routers": { "/": ["router0"] }, "middleware": { "/": ["appMiddleware0"] }, "statics": { "/": ["/public"] } }
+      , "auth": { "label": "auth", "routers": { "/": ["appRouter0", "router1"] }, "middleware": { "/": ["middleware0"] } }
+      , "app2": { "label": "app2", "routers": { "/app2": ["appRouter1", "router0"], "/": ["router1"] }, "middleware": {} }
     }
     , "routers": {
       "appRouter0": {
@@ -72,6 +72,7 @@ function routeServerHelper(module, callback) {
   nodeExpress = callback(function () {
     return apps[nodeExpress.callbackCount - 1];
   });
+  nodeExpress.static = callback();
   nodeExpress.Router = callback(function () {
     return routers[nodeExpress.Router.callbackCount - 1];
   });
@@ -86,10 +87,13 @@ function routeServerHelper(module, callback) {
     })
   };
   routeReporter = {
-
+      "extended": callback()
+  };
+  nodePath = {
+      "join": callback()
   };
   routingErrors = module([".type_route_routingErrors"]);
-  routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps, routingErrors, routeReporter]]);
+  routeServer = module(["TruJS.compile.type.route._Server", [, server, nodeExpress, nodeHttp, nodeHttps, routingErrors, routeReporter, "dirname", nodePath]]);
 
   return {
     "routeServer": routeServer
@@ -174,9 +178,9 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
       .value(routeServerHelper, "routers[3].all")
       .hasBeenCalled(1);
 
-    test("The 1st app's use method should be called twice")
+    test("The 1st app's use method should be called 3 times")
       .value(routeServerHelper, "apps[0].use")
-      .hasBeenCalled(2);
+      .hasBeenCalled(3);
 
     test("The 2nd app's use method should be 3 times")
       .value(routeServerHelper, "apps[1].use")
@@ -199,6 +203,10 @@ function testrouteServer1(arrange, act, assert, routeServerHelper) {
       .run(routeServerHelper.apps[2].use.getArgs, [2])
       .stringify()
       .equals("[[\"/\"],{}]");
+
+    test("The express.static method should be called once")
+      .value(routeServerHelper.nodeExpress.static)
+      .hasBeenCalled(1);
 
   });
 }
@@ -286,12 +294,12 @@ function testrouteServer2(arrange, act, assert, routeServerHelper) {
     test("res.app should be")
       .value(res, "app")
       .stringify()
-      .equals("{\"label\":\"app\",\"routers\":{\"/\":[\"router0\"]},\"middleware\":[\"appMiddleware0\"],\"app\":{},\"server\":{}}");
+      .equals("{\"label\":\"app\",\"routers\":{\"/\":[\"router0\"]},\"middleware\":{\"/\":[\"appMiddleware0\"]},\"statics\":{\"/\":[\"/public\"]},\"app\":{},\"server\":{}}");
 
     test("res.auth should be")
       .value(res, "auth")
       .stringify()
-      .equals("{\"label\":\"auth\",\"routers\":{\"/\":[\"appRouter0\",\"router1\"]},\"middleware\":[\"middleware0\"],\"app\":{},\"server\":{}}");
+      .equals("{\"label\":\"auth\",\"routers\":{\"/\":[\"appRouter0\",\"router1\"]},\"middleware\":{\"/\":[\"middleware0\"]},\"app\":{},\"server\":{}}");
 
     test("res.auth.app should be")
       .value(res, "auth.app")
@@ -300,7 +308,7 @@ function testrouteServer2(arrange, act, assert, routeServerHelper) {
     test("res.app2 should be")
       .value(res, "app2")
       .stringify()
-      .equals("{\"label\":\"app2\",\"routers\":{\"/app2\":[\"appRouter1\",\"router0\"],\"/\":[\"router1\"]},\"middleware\":[],\"app\":{},\"server\":{}}");
+      .equals("{\"label\":\"app2\",\"routers\":{\"/app2\":[\"appRouter1\",\"router0\"],\"/\":[\"router1\"]},\"middleware\":{},\"app\":{},\"server\":{}}");
 
     test("res.app2.server should be")
       .value(res, "app2.server")

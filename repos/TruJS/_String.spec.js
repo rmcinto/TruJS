@@ -189,3 +189,34 @@ function testString9(arrange, act, assert, module) {
         test('All generated guids are unique').value(guids).isUnique();
     });
 }
+/**[@test({ "title": "TruJS.String.trim: "})]*/
+function testString10(arrange, act, assert, module) {
+    var delim, trim, text, res;
+
+    arrange(function () {
+      trim = module(["TruJS._String", []]).trim;
+      text = "/test/test/";
+      res = [];
+      delim = "[/]";
+    });
+
+    act(function () {
+        res[0] = trim(text, delim, "end");
+        res[1] = trim(text, delim, "start");
+        res[2] = trim(text, delim);
+    });
+
+    assert(function (test) {
+        test("res[0] should be")
+        .value(res[0])
+        .equals("/test/test");
+
+        test("res[1] should be")
+        .value(res[1])
+        .equals("test/test/");
+
+        test("res[2] should be")
+        .value(res[2])
+        .equals("test/test");
+    });
+}

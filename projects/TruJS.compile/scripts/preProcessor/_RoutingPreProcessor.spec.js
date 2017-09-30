@@ -74,13 +74,13 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       .value(entry, "module")
       .hasProperty("$$serve$$");
 
-    test("$$routing$$ should have 5 properties")
+    test("$$routing$$ should have 7 properties")
       .value(entry, "module.$$routing$$[0]")
-      .hasPropertyCountOf(5);
+      .hasPropertyCountOf(7);
 
-    test("$$routing$$ should have 5 properties")
-      .value(entry, "module.$$routing$$[0]")
-      .hasPropertyCountOf(5);
+    test("$$server$$ should have 3 properties")
+      .value(entry, "module.$$server$$[0]")
+      .hasPropertyCountOf(3);
 
     test("$$server$$.apps should have 2 properties")
       .value(entry, "module.$$server$$[0].apps[0]")
@@ -89,22 +89,17 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
     test("The \"app\" application shoud be")
       .value(entry, "module.$$server$$[0].apps[0].app")
       .stringify()
-      .equals("{\"label\":\"app\",\"routers\":{\"/order\":[\"appRouter0\",\"myroute\"],\"/\":[\"appRouter1\",\"route0\",\"myroute\"]},\"middleware\":[]}");
+      .equals("{\"label\":\"app\",\"routers\":{\"/\":[\"route0\",\"myroute\"],\"/order\":[\"myroute\"]},\"middleware\":{\"/\":[\"appEntryPoint0\"],\"/order\":[\"appEntryPoint2\"]},\"statics\":{\"/\":[],\"/order\":[]}}");
 
     test("The \"auth\" application should be")
       .value(entry, "module.$$server$$[0].apps[0].auth")
       .stringify()
-      .equals("{\"label\":\"auth\",\"routers\":{\"-\":[\"myroute\"]},\"middleware\":[\"appMiddleware0\",\"middleware0\"]}");
+      .equals("{\"label\":\"auth\",\"routers\":{\"-\":[\"myroute\"]},\"middleware\":{\"-\":[\"authEntryPoint1\",\"middleware0\"]},\"statics\":{\"-\":[]}}");
 
 
-    test("$$server$$ routers should have 4 properties")
+    test("$$server$$ routers should have 2 properties")
       .value(entry, "module.$$server$$[0].routers[0]")
-      .hasPropertyCountOf(4);
-
-    test("The router, appRouter0 should be")
-      .value(entry, "module.$$server$$[0].routers[0].appRouter0")
-      .stringify()
-      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"router\",\"label\":\"appRouter0\",\"method\":\"use\"}}]");
+      .hasPropertyCountOf(2);
 
     test("The router, myroute should be")
       .value(entry, "module.$$server$$[0].routers[0].myroute")
@@ -116,14 +111,20 @@ function testRoutingPreProcessor1(arrange, act, assert, callback, promise, modul
       .stringify()
       .equals("[{\"factory\":[\"My.file1\",[]],\"meta\":{\"type\":\"router\",\"method\":\"all\",\"path\":\"*\",\"label\":\"router0\"}}]");
 
-    test("$$server$$ middleware should have 2 properties")
+    test("$$server$$ middleware should have 4 properties")
       .value(entry, "module.$$server$$[0].middleware[0]")
-      .hasPropertyCountOf(2);
+      .hasPropertyCountOf(4);
 
-    test("The middleware, appMiddleware0 should be")
-      .value(entry, "module.$$server$$[0].middleware[0].appMiddleware0")
+
+    test("The middleware appEntryPoint0 should be")
+      .value(entry, "module.$$server$$[0].middleware[0].appEntryPoint0")
       .stringify()
-      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"middleware\",\"label\":\"appMiddleware0\",\"method\":\"use\"}}]");
+      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"middleware\",\"method\":\"use\",\"label\":\"appEntryPoint0\"}}]");
+
+    test("The middleware authEntryPoint1 should be")
+      .value(entry, "module.$$server$$[0].middleware[0].authEntryPoint1")
+      .stringify()
+      .equals("[{\"factory\":[\"My.file3\",[]],\"meta\":{\"type\":\"middleware\",\"label\":\"authEntryPoint1\",\"method\":\"use\"}}]");
 
     test("The middleware, middleware0 should be")
       .value(entry, "module.$$server$$[0].middleware[0].middleware0")

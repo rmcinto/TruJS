@@ -18,9 +18,9 @@ function testRoutingCollector1(arrange, act, assert, callback, module) {
       .value(collector_module)
       .hasBeenCalled(1);
 
-    test("entry.files should have 1 member")
+    test("entry.files should have 2 members")
       .value(entry, "files")
-      .hasMemberCountOf(1);
+      .hasMemberCountOf(2);
 
     test("entry.files[0] should be")
       .value(entry, "files[0]")

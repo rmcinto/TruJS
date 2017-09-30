@@ -220,7 +220,18 @@ function _String(arrayOfType) {
       , "trim": {
         "enumerable": true
         , "value": function (val, trim, dir) {
-          var patt = new RegExp((dir !== "end" && ("^(" + trim + ")+") || "") + "|" + (dir !== "start" && ("(" + trim + ")+$") || ""), "g");
+          var pattVal, patt;
+          //add the leading
+          if (dir !== "end") {
+              pattVal = "^(" + trim + ")+";
+          }
+          //add the trailing
+          if (dir !== "start") {
+              pattVal = pattVal && (pattVal + "|") || "";
+              pattVal += "(" + trim + ")+$";
+          }
+          //create the reg ex pattern
+          patt = new RegExp(pattVal, "g");
 
           return val.replace(patt, "");
         }

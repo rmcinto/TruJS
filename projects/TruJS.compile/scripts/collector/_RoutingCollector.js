@@ -9,6 +9,7 @@ function _RoutingCollector(promise, collector_module) {
     "defaults": {
       "files": [
         "+./*.route.js"
+        , "{repos}/TruJS/log/_Reporter.js"
       ]
       , "moduleFile": "route.module.json"
     }
