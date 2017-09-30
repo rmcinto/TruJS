@@ -3,7 +3,7 @@
 * @factory
 * @function
 */
-function _FilesSaver(nodeFs, nodePath, promise) {
+function _FilesSaver(nodeFs, nodePath, promise, errors) {
   var cnsts = {
     "exists": -4075
     , "validExts": [
@@ -12,7 +12,9 @@ function _FilesSaver(nodeFs, nodePath, promise) {
       , ".xml"
       , ".txt"
     ]
-  };
+  }
+  , DIR_SPLIT_PATT = /[/\\]/
+  ;
 
   /**
   * Loops through all the files and saves each
@@ -20,21 +22,23 @@ function _FilesSaver(nodeFs, nodePath, promise) {
   */
   function saveFiles(resolve, reject, filePath, files) {
     var len = files.length
+    , index = 0
     , hasErr;
 
-    files.forEach(function forEachFile(fileObj) {
-      saveFile(filePath, fileObj, writeCallback);
-    });
+    saveFile(filePath, files[index], writeCallback);
 
     function writeCallback(err) {
+        index++;
         if(!!err) {
           hasErr = true;
           reject(err);
         }
         else if (!hasErr) {
-          len--;
-          if (len === 0) {
-            resolve();
+          if (index < files.length) {
+              saveFile(filePath, files[index], writeCallback);
+          }
+          else {
+              resolve();
           }
         }
     }
@@ -96,20 +100,46 @@ function _FilesSaver(nodeFs, nodePath, promise) {
    @function
   */
   function ensureDirectory(filePath, cb) {
-    var pathObj = nodePath.parse(filePath);
+      var path = nodePath.parse(filePath).dir
+      , segs =  path.split(DIR_SPLIT_PATT)
+      , sep = DIR_SPLIT_PATT.exec(path)[0]
+      , index = 1
+      ;
 
-    nodeFs.mkdir(pathObj.dir, function(err) {
-      //if there was an error, it could be that the directory exists, ignore those
-      if (!!err) {
-        if (err.errno !== cnsts.exists) {
-          cb(err);
-          return;
-        }
+      makeDirectory(segs.slice(0, index).join(sep), makeDirCb);
+
+      function makeDirCb(err) {
+          index++;
+          if (!!err) {
+              cb(err);
+          }
+          else if (index <= segs.length) {
+              makeDirectory(segs.slice(0, index).join(sep), makeDirCb);
+          }
+          else {
+              cb();
+          }
       }
-      //all good, fire the callback
-      cb();
-    });
+
   }
+  /**
+  *
+  * @function
+  */
+  function makeDirectory(path, cb) {
+      nodeFs.mkdir(path, function(err) {
+        //if there was an error, it could be that the directory exists, ignore those
+        if (!!err) {
+          if (err.errno !== cnsts.exists) {
+            cb(err);
+            return;
+          }
+        }
+        //all good, fire the callback
+        cb();
+      });
+  }
+
   /**
   *
   * @worker

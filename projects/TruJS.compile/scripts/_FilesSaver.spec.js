@@ -30,7 +30,6 @@ function testFileSaver1(arrange, act, assert, module, callback) {
         done();
       })
       .catch(function (err) {
-        console.log(err);
         res = err;
         done();
       });
@@ -42,13 +41,13 @@ function testFileSaver1(arrange, act, assert, module, callback) {
       .not()
       .isError();
 
-    test("The mkdir callback should be called once")
+    test("The mkdir callback should be called 5 times")
       .value(nodeFs, "mkdir")
-      .hasBeenCalled(1);
+      .hasBeenCalled(5);
 
     test("The mkdir should be called with path")
       .value(nodeFs, "mkdir")
-      .hasBeenCalledWithArg(0, 0, mkdirPath);
+      .hasBeenCalledWithArg(4, 0, mkdirPath);
 
     test("The writeFile callback should be called once")
       .value(nodeFs, "writeFile")
@@ -147,7 +146,7 @@ function testFileSaver3(arrange, act, assert, module, callback) {
 
     test("The mkdir should be called with path")
       .value(nodeFs, "mkdir")
-      .hasBeenCalledWithArg(0, 0, mkdirPath);
+      .hasBeenCalledWithArg(4, 0, mkdirPath);
 
     test("The writeFile callback should be called with path")
       .value(nodeFs, "writeFile")

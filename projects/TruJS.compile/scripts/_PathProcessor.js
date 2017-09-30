@@ -75,7 +75,7 @@ function _PathProcessor(nodePath, pathParser) {
         pathObj.directory = true;
         pathObj.options.recurse = true;
         pathObj.fragment = pathObj.dir.substring(pathObj.dir.indexOf("*"));
-        pathObj.path = pathObj.dir.substring(0, pathObj.dir.indexOf("*"));
+        pathObj.path = pathObj.dir = pathObj.dir.substring(0, pathObj.dir.indexOf("*"));
     }
 
     return pathObj;

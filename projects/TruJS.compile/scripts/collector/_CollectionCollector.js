@@ -16,7 +16,7 @@
 *
 * @factory
 */
-function _CollectionCollector(promise, nodeFs, pathResolver, getScriptsDir, errors) {
+function _CollectionCollector(promise, nodeFs, pathResolver, getScriptsDir, errors, fileObj) {
 
   /**
   * Resolves all relative paths in the entry's `files` array
@@ -59,7 +59,7 @@ function _CollectionCollector(promise, nodeFs, pathResolver, getScriptsDir, erro
     }
 
     //handler for the file read callback
-    function readFileCb(err, data, fileObj, indx) {
+    function readFileCb(err, data, pathObj, indx) {
       //stop if we've had an error
       if(hasErr) {
         return;
@@ -72,8 +72,8 @@ function _CollectionCollector(promise, nodeFs, pathResolver, getScriptsDir, erro
       }
       else {
         //add the data to the object and update the array
-        fileObj.data = data;
-        allData[indx] = fileObj;
+        //fileObj.data = data;
+        allData[indx] = fileObj(pathObj, data);
 
         len--;
         if (len === 0) {
@@ -105,7 +105,7 @@ function _CollectionCollector(promise, nodeFs, pathResolver, getScriptsDir, erro
         });
       }
       else {
-        return promise.resolve(paths);
+        return promise.resolve([]);
       }
     });
 

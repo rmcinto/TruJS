@@ -36,8 +36,8 @@ function testJavaScriptAssembler(arrange, act, assert, callback, module) {
       .value(res)
       .hasMemberCountOf(1);
 
-    test("res[0].base should be")
-      .value(res, "[0].base")
+    test("res[0].file should be")
+      .value(res, "[0].file")
       .equals("TestName.js");
 
     test("res[0].data[0] should be")
